@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Plataforma RC Jóvenes Barquisimeto
 
-## Getting Started
+Panel de gestión de la sección de Jóvenes de Regnum Christi Barquisimeto. Es una PWA hecha con Next.js, pensada para correr gratis (Vercel Hobby o Firebase App Hosting) con Firebase y herramientas de Google.
 
-First, run the development server:
+> **Versión de demostración.** Todos los datos son simulados y generados de forma determinista en `src/lib/data/semilla.ts`. Ningún nombre ni número corresponde a personas reales. Las integraciones (Firestore, Calendar, Drive, Sheets, WhatsApp, Instagram) también están simuladas.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Módulos
+
+| Ruta | Módulo | Qué hace hoy |
+|---|---|---|
+| `/` | Inicio | KPIs, seguimiento del día, alertas y 6 gráficos de estadísticas |
+| `/personas` | Personas | Base CRM con filtros, ficha con historial y revisión de duplicados |
+| `/calendario` | Calendario | Actividades con cuenta regresiva y servidores |
+| `/seguimiento` | Seguimiento | Tablero post retiro D0, D+2, D+4, D+7, D+12 y D+15 con mensajes de WhatsApp en un clic |
+| `/equipos` | Equipos de reino | Asistencia a encuentros (móvil), alertas a 2 y 4 faltas seguidas |
+| `/direccion-espiritual` | Dirección espiritual | Cobertura, confirmación de citas por el director, enlace y QR a la agenda de citas |
+| `/apostolados` | Apostolados | Integrantes, formularios conectados y quiénes pasaron por cada uno |
+| `/formacion` | Formación | Charla mensual, banco de ponentes y evaluación de formadores |
+| `/retiros` | Retiros | Triduo y EE: menú, calculadora de compras, tareas e invitados |
+| `/economia` | Economía | Ingresos y gastos en USD y Bs a tasa BCV, 10 % sobre la ganancia, abonos y custodios |
+| `/casa` | La casa | Reservas con doble aprobación, coworking, cafetín, inventario, mantenimiento y limpieza |
+| `/reservar` | Formulario público | Solicitud de reserva con choque de horarios y precio por bloque de 1,5 h |
+| `/comunicaciones` | Comunicaciones | Estadísticas de Instagram de la sección y del director, plantillas |
+| `/documentos` | Documentos | Repositorio (Google Drive) e informes mensuales |
+| `/configuracion` | Configuración | Roles editables con matriz de permisos, tarifas y conexiones |
+
+## Estructura
+
+```
+src/
+  app/                 páginas (App Router), una carpeta por módulo
+  components/          sidebar, UI base (ui.tsx), gráficos con Recharts (charts.tsx)
+  lib/domain/          reglas de negocio puras, sin dependencias de UI (con pruebas)
+  lib/data/semilla.ts  datos simulados deterministas
+  lib/data/repo.ts     capa de consultas que usan las páginas
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Las reglas de negocio están en `src/lib/domain` y se prueban en `reglas.test.ts`: pasos post retiro, faltas seguidas, alertas de DE, 10 % sobre la ganancia, duplicados por cédula/teléfono/nombre, tarifas y choques de reservas, y evaluación de formadores.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Cómo correrlo
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm install
+npm run dev        # http://localhost:3000
+npm test           # 27 pruebas de reglas de negocio
+npm run build      # build de producción
+```
 
-## Learn More
+## Pasar de datos simulados a datos reales
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Crear el proyecto de Firebase con la cuenta de la plataforma (plan Spark, gratis).
+2. Reemplazar las funciones de `src/lib/data/repo.ts` por consultas a Firestore, sin tocar las páginas.
+3. Archivos a Google Drive mientras no haya plan Blaze; migrar a Firebase Storage después.
+4. Importar los Google Forms de cada apostolado con una cuenta de servicio (Sheets API) y deduplicar con `compararPersonas`.
+5. Las credenciales van en variables de entorno del hosting, nunca en el repositorio.

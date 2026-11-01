@@ -1,69 +1,127 @@
-import Image from "next/image";
+import Link from "next/link";
+import { AvisoSimulado, Alerta, Badge, Card, Grid, Kpi, PageHeader } from "@/components/ui";
+import { BarrasHorizontales, Columnas, Embudo, IngresosGastos, Linea } from "@/components/charts";
+import {
+  alertasDE, alertasFaltas, asistenciaPorEquipo, coberturaPorMes, economiaPorArea, economiaPorMes, embudo,
+  kpisInicio, nombreCompleto, participantesPorActividad, pendientesSeguimientoHoy, persona, proximasActividades,
+} from "@/lib/data/repo";
+import { fechaLarga, fechaCorta, HOY } from "@/lib/domain/fechas";
+import { usd } from "@/lib/domain/economia";
+import { INSTAGRAM } from "@/lib/data/instagram";
 
-export default function Home() {
+export default function Inicio() {
+  const k = kpisInicio();
+  const pasos = pendientesSeguimientoHoy();
+  const af = alertasFaltas();
+  const ad = alertasDE();
+  const prox = proximasActividades(5);
+  const eco = economiaPorArea("10").slice(0, 5);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <>
+      <PageHeader
+        title="Buenos días, Jean"
+        description={`${fechaLarga(HOY)} · ${pasos.reduce((a, p) => a + p.personas.length, 0)} mensajes de seguimiento y ${af.length + ad.length} alertas pendientes`}
+      />
+      <AvisoSimulado />
+
+      <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(190px, 100%), 1fr))" }}>
+        <Kpi label="Jóvenes que hacen vida" value={k.haceVida} note={`de ${k.total} personas en la base`} />
+        <Kpi label="De paso" value={k.dePaso} note="Asistieron a actividades" />
+        <Kpi label="En seguimiento post retiro" value={k.enSeguimiento} note="God's Plan 23 y Search XXV" />
+        <Kpi label="Cobertura de DE (60 días)" value={`${k.coberturaDE} %`} note={`${k.deRealizadasMes} DE realizadas en octubre`} tone={k.coberturaDE < 60 ? "warn" : "good"} />
+        <Kpi label="Asistencia a encuentros" value={`${k.asistencia} %`} note={`${k.equipos} equipos de reino · octubre`} />
+      </div>
+
+      <Grid min={360}>
+        <Card title="Hoy toca: seguimiento post retiro" action={<Link href="/seguimiento" className="text-sm font-semibold">Ver todo</Link>}>
+          <ul className="flex flex-col gap-2">
+            {pasos.slice(0, 5).map((p) => (
+              <li key={`${p.actividad.id}-${p.clave}`} className="flex flex-wrap items-center gap-3 rounded-xl bg-surface-2 p-3">
+                <Badge tone="accent">D+{p.dia}</Badge>
+                <div className="flex min-w-40 flex-1 flex-col">
+                  <strong className="text-sm">{p.titulo}</strong>
+                  <span className="text-xs text-muted">{p.actividad.nombre} · {p.personas.length} jóvenes</span>
+                </div>
+                <Link href={`/seguimiento?actividad=${p.actividad.id}`} className="inline-flex min-h-11 items-center rounded-xl bg-[#1e3a8a] px-4 text-sm font-bold text-white no-underline">Abrir</Link>
+              </li>
+            ))}
+          </ul>
+        </Card>
+
+        <Card title="Alertas" subtitle="Faltas a encuentros y dirección espiritual">
+          <div className="flex flex-col gap-2">
+            {af.filter((a) => a.nivel === "crecimiento").map((a) => (
+              <Alerta key={a.personaId} tipo={`${a.faltas} faltas`} titulo={nombreCompleto(persona(a.personaId))} detalle={`Equipo ${a.equipo.nombre} · avisar a crecimiento`} />
+            ))}
+            {ad.filter((a) => a.nivel === "crecimiento").slice(0, 2).map((a) => (
+              <Alerta key={a.personaId} tipo="3 meses" titulo={`${nombreCompleto(persona(a.personaId))} sin DE`} detalle={`Última DE el ${fechaCorta(a.ultima!.inicio)} · proponer cambio de director`} />
+            ))}
+            {af.filter((a) => a.nivel === "responsable").slice(0, 2).map((a) => (
+              <Alerta key={a.personaId} tone="info" tipo="2 faltas" titulo={nombreCompleto(persona(a.personaId))} detalle={`Equipo ${a.equipo.nombre} · el responsable ya fue notificado`} />
+            ))}
+          </div>
+        </Card>
+      </Grid>
+
+      <h2 className="text-lg font-extrabold">Estadísticas</h2>
+      <Grid min={340}>
+        <Card title="Cobertura de dirección espiritual" subtitle="% de quienes hacen vida con DE en los últimos 60 días">
+          <Linea data={coberturaPorMes()} x="mes" sufijo=" %" series={[{ clave: "cobertura", nombre: "Cobertura de DE", color: "var(--accent)" }]} />
+        </Card>
+        <Card title="Ingresos y gastos de la sección" subtitle="En dólares, a la tasa BCV de cada movimiento">
+          <IngresosGastos data={economiaPorMes()} />
+        </Card>
+        <Card title="Participantes por actividad" subtitle="Personas inscritas en 2026">
+          <BarrasHorizontales data={participantesPorActividad().slice(0, 7)} x="actividad" y="participantes" nombre="Participantes" />
+        </Card>
+        <Card title="Asistencia a encuentros por equipo" subtitle="Octubre">
+          <BarrasHorizontales data={asistenciaPorEquipo().sort((a, b) => b.asistencia - a.asistencia)} x="equipo" y="asistencia" nombre="Asistencia" sufijo=" %" />
+        </Card>
+        <Card title="Después de God's Plan 23" subtitle="Avance del seguimiento post retiro">
+          <Embudo etapas={embudo("gpr23")} />
+        </Card>
+        <Card title="Seguidores en Instagram" subtitle="Fin de cada mes">
+          <Columnas data={INSTAGRAM.seccion.mensual} x="mes" y="seguidores" nombre="Seguidores de la sección" />
+        </Card>
+      </Grid>
+
+      <Grid min={360}>
+        <Card title="Próximas actividades" action={<Link href="/calendario" className="text-sm font-semibold">Calendario</Link>}>
+          <ul className="flex flex-col">
+            {prox.map((a) => (
+              <li key={a.id} className="flex items-center gap-4 border-b border-border py-2.5 last:border-0">
+                <div className="flex w-16 flex-col items-center">
+                  <span className="text-2xl font-extrabold text-accent">{a.faltan}</span>
+                  <span className="text-[11px] text-muted">{a.faltan === 1 ? "día" : "días"}</span>
+                </div>
+                <div className="flex flex-1 flex-col">
+                  <strong className="text-sm">{a.nombre}</strong>
+                  <span className="text-xs text-muted">{fechaLarga(a.inicio)} · {a.lugar}</span>
+                </div>
+                <Badge>{a.apostolado}</Badge>
+              </li>
+            ))}
+          </ul>
+        </Card>
+        <Card title="Economía de octubre" subtitle="Por apostolado o área, en dólares" action={<Link href="/economia" className="text-sm font-semibold">Informe</Link>}>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-80 text-sm">
+              <thead><tr className="text-left text-muted"><th className="py-2 font-semibold">Área</th><th className="py-2 text-right font-semibold">Ingresos</th><th className="py-2 text-right font-semibold">Gastos</th><th className="py-2 text-right font-semibold">Resultado</th></tr></thead>
+              <tbody>
+                {eco.map((e) => (
+                  <tr key={e.areaId} className="border-t border-border">
+                    <td className="py-2">{e.nombre}</td>
+                    <td className="py-2 text-right">{usd(e.ingresosUSD)}</td>
+                    <td className="py-2 text-right">{usd(e.gastosUSD)}</td>
+                    <td className={`py-2 text-right font-bold ${e.ganancia >= 0 ? "text-good-ink" : "text-warn-ink"}`}>{usd(e.ganancia)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      </Grid>
+    </>
   );
 }
