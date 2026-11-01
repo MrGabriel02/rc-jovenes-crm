@@ -12,6 +12,15 @@ export const TARIFAS: Record<TipoEspacio, number> = {
   cafetin: 0,
 };
 
+/** El cafetín paga el 10 % de cada venta más USD 300 de alquiler mensual. */
+export const CAFETIN = { porcentajeVentas: 0.1, alquilerMensual: 300 };
+
+export function cobroCafetin(ventasDelMes: number[], cafetin = CAFETIN) {
+  const totalVentas = ventasDelMes.reduce((a, v) => a + v, 0);
+  const porcentaje = Math.round(totalVentas * cafetin.porcentajeVentas * 100) / 100;
+  return { totalVentas, porcentaje, alquiler: cafetin.alquilerMensual, total: porcentaje + cafetin.alquilerMensual };
+}
+
 export const COWORKING = { mensual: 50, horario: "Lunes a viernes, 7:00 a.m. a 6:00 p.m." };
 
 export function precioReserva(tipo: TipoEspacio, bloques: number, solicitante: TipoSolicitante) {

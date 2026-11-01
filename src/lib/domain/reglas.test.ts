@@ -5,7 +5,7 @@ import { nivelAlertaDE, estadoEfectivo, cobertura, porConfirmar } from "./direcc
 import { resultado, deudaInscripcion, saldoPorCustodio } from "./economia";
 import { compararPersonas, normalizarTelefono } from "./duplicados";
 import { listaDeCompras } from "./menu";
-import { precioReserva, seSolapan, estadoReserva } from "./reservas";
+import { precioReserva, seSolapan, estadoReserva, cobroCafetin } from "./reservas";
 import { evaluarFormador } from "./formadores";
 import { mesesEntre } from "./fechas";
 import type { Encuentro, MovimientoEconomico, Reserva, SesionDE } from "./types";
@@ -156,5 +156,12 @@ describe("formadores", () => {
     const todas = ["retiro_anual", "vfc", "fin_semana_formadores"] as const;
     expect(evaluarFormador({}, [...todas]).proponerDestitucion).toBe(true);
     expect(evaluarFormador({ vfc: true }, [...todas])).toEqual({ faltas: ["retiro_anual", "fin_semana_formadores"], proponerDestitucion: false });
+  });
+});
+
+describe("cafetín", () => {
+  it("cobra el 10 % de cada venta más USD 300 de alquiler", () => {
+    expect(cobroCafetin([100, 50.5])).toEqual({ totalVentas: 150.5, porcentaje: 15.05, alquiler: 300, total: 315.05 });
+    expect(cobroCafetin([]).total).toBe(300);
   });
 });

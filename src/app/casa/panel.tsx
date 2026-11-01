@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Badge, Button, Card, Grid, Kpi, Table } from "@/components/ui";
 import { BarrasHorizontales } from "@/components/charts";
-import { estadoReserva, precioReserva, finReserva, COWORKING } from "@/lib/domain/reservas";
+import { estadoReserva, precioReserva, finReserva, COWORKING, CAFETIN, cobroCafetin } from "@/lib/domain/reservas";
 import { usd } from "@/lib/domain/economia";
 import type { Espacio, Reserva } from "@/lib/domain/types";
 import type * as CasaData from "@/lib/data/casa";
@@ -100,14 +100,19 @@ export function PanelCasa({ espacios, reservas, directores, casa }: { espacios: 
 
       {tab === "Cafetín y gastos" ? (
         <Grid min={340}>
-          <Card title="Cierre del cafetín · octubre" subtitle="Paga un porcentaje de lo vendido más un alquiler">
-            <dl className="grid grid-cols-[1fr_auto] gap-y-2 text-sm">
-              <dt>Ventas reportadas</dt><dd className="text-right">{usd(casa.CAFETIN.ventasOctubre)}</dd>
-              <dt>Porcentaje ({casa.CAFETIN.porcentaje * 100} %)</dt><dd className="text-right">{usd(casa.CAFETIN.ventasOctubre * casa.CAFETIN.porcentaje)}</dd>
-              <dt>Alquiler</dt><dd className="text-right">{usd(casa.CAFETIN.alquiler)}</dd>
-              <dt className="font-bold">Total a cobrar</dt><dd className="text-right font-bold">{usd(casa.CAFETIN.ventasOctubre * casa.CAFETIN.porcentaje + casa.CAFETIN.alquiler)}</dd>
-            </dl>
-            <p className="text-xs text-muted">Porcentaje y alquiler simulados: se configuran con el acuerdo real.</p>
+          <Card title="Cierre del cafetín · octubre" subtitle={`Paga el ${CAFETIN.porcentajeVentas * 100} % de cada venta más ${usd(CAFETIN.alquilerMensual)} de alquiler mensual`}>
+            {(() => {
+              const c = cobroCafetin([...casa.VENTAS_CAFETIN_OCTUBRE]);
+              return (
+                <dl className="grid grid-cols-[1fr_auto] gap-y-2 text-sm">
+                  <dt>Ventas reportadas ({casa.VENTAS_CAFETIN_OCTUBRE.length} días)</dt><dd className="text-right">{usd(c.totalVentas)}</dd>
+                  <dt>{CAFETIN.porcentajeVentas * 100} % de las ventas</dt><dd className="text-right">{usd(c.porcentaje)}</dd>
+                  <dt>Alquiler mensual</dt><dd className="text-right">{usd(c.alquiler)}</dd>
+                  <dt className="font-bold">Total a cobrar</dt><dd className="text-right font-bold">{usd(c.total)}</dd>
+                </dl>
+              );
+            })()}
+            <p className="text-xs text-muted">Las ventas son simuladas. El porcentaje y el alquiler son los del acuerdo.</p>
           </Card>
           <Card title="Gastos fijos de la casa" subtitle="Octubre, en dólares">
             <BarrasHorizontales data={casa.GASTOS_FIJOS} x="concepto" y="monto" nombre="Gasto" sufijo=" $" color="var(--series-2)" />

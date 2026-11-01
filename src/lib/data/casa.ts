@@ -15,7 +15,8 @@ export const INTERESADOS = {
   "No concretó": ["[Interesado F] · precio", "[Interesado G] · horario"],
 } as const;
 
-export const CAFETIN = { ventasOctubre: 640, porcentaje: 0.1, alquiler: 60 };
+/** Ventas simuladas del cafetín en octubre (USD), una por día de venta. */
+export const VENTAS_CAFETIN_OCTUBRE = [38, 52, 41, 60, 35, 47, 55, 44, 39, 62, 58, 33, 49, 51, 45, 40, 57, 36, 48, 53];
 
 export const INVENTARIO = [
   { closet: "Primer piso", division: "Misiones", articulo: "Carpas de 4 personas", cantidad: 6, prestado: null },
