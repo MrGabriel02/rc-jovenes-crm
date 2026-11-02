@@ -195,13 +195,13 @@ export const reservas: Reserva[] = [
 ];
 
 export const roles: Rol[] = [
-  { id: "admin", nombre: "Administrador CRM", alcance: "todo", permisos: Object.fromEntries((["inicio", "personas", "calendario", "seguimiento", "equipos", "direccion", "apostolados", "formacion", "retiros", "economia", "casa", "comunicaciones", "documentos", "configuracion"] as const).map((m) => [m, "editar"])) },
-  { id: "director", nombre: "Director de sección", alcance: "todo", permisos: { inicio: "leer", personas: "leer", calendario: "editar", seguimiento: "leer", equipos: "editar", direccion: "leer", apostolados: "editar", formacion: "leer", retiros: "leer", economia: "leer", casa: "editar", documentos: "leer" } },
+  { id: "admin", nombre: "Administrador CRM", alcance: "todo", permisos: Object.fromEntries((["inicio", "personas", "calendario", "seguimiento", "equipos", "direccion", "apostolados", "formacion", "retiros", "economia", "casa", "camaras", "comunicaciones", "documentos", "configuracion"] as const).map((m) => [m, "editar"])) },
+  { id: "director", nombre: "Director de sección", alcance: "todo", permisos: { inicio: "leer", personas: "leer", calendario: "editar", seguimiento: "leer", equipos: "editar", direccion: "leer", apostolados: "editar", formacion: "leer", retiros: "leer", economia: "leer", casa: "editar", camaras: "leer", documentos: "leer" } },
   { id: "crecimiento", nombre: "Encargado de crecimiento", alcance: "todo", permisos: { inicio: "leer", personas: "editar", seguimiento: "editar", equipos: "editar", direccion: "leer", calendario: "leer" } },
   { id: "responsable", nombre: "Responsable de equipo", alcance: "equipo", permisos: { equipos: "editar", calendario: "leer", retiros: "leer" } },
   { id: "director_de", nombre: "Director espiritual", alcance: "dirigidos", permisos: { direccion: "editar" } },
   { id: "economo", nombre: "Ecónomo de apostolado", alcance: "apostolado", permisos: { economia: "editar", apostolados: "leer", documentos: "editar" } },
   { id: "reservas", nombre: "Encargado de reservas y coworking", alcance: "todo", permisos: { casa: "editar", calendario: "leer" } },
-  { id: "mantenimiento", nombre: "Encargado de mantenimiento", alcance: "todo", permisos: { casa: "editar" } },
+  { id: "mantenimiento", nombre: "Encargado de mantenimiento", alcance: "todo", permisos: { casa: "editar", camaras: "editar" } },
   { id: "formacion", nombre: "Coordinador de formación", alcance: "todo", permisos: { formacion: "editar", calendario: "editar" } },
 ];

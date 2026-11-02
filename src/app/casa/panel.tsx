@@ -7,11 +7,13 @@ import { estadoReserva, precioReserva, finReserva, COWORKING, CAFETIN, cobroCafe
 import { usd } from "@/lib/domain/economia";
 import type { Espacio, Reserva } from "@/lib/domain/types";
 import type * as CasaData from "@/lib/data/casa";
+import type { Camara } from "@/lib/data/camaras";
+import { MapaCasa } from "./mapa";
 
-const TABS = ["Reservas", "Coworking", "Cafetín y gastos", "Inventario", "Mantenimiento y limpieza"] as const;
+const TABS = ["Mapa", "Reservas", "Coworking", "Cafetín y gastos", "Inventario", "Mantenimiento y limpieza"] as const;
 
-export function PanelCasa({ espacios, reservas, directores, casa }: { espacios: Espacio[]; reservas: Reserva[]; directores: string[]; casa: typeof CasaData }) {
-  const [tab, setTab] = useState<(typeof TABS)[number]>("Reservas");
+export function PanelCasa({ espacios, reservas, directores, casa, camaras, ahora }: { espacios: Espacio[]; reservas: Reserva[]; directores: string[]; casa: typeof CasaData; camaras: Camara[]; ahora: string }) {
+  const [tab, setTab] = useState<(typeof TABS)[number]>("Mapa");
   const [lista, setLista] = useState(reservas);
   const espacio = (id: string) => espacios.find((e) => e.id === id)!;
   const aprobar = (id: string, dir: string) => setLista((l) => l.map((r) => (r.id === id && !r.aprobaciones.includes(dir) ? { ...r, aprobaciones: [...r.aprobaciones, dir] } : r)));
@@ -25,6 +27,10 @@ export function PanelCasa({ espacios, reservas, directores, casa }: { espacios: 
           <button key={t} role="tab" type="button" aria-selected={tab === t} onClick={() => setTab(t)} className={`min-h-10 rounded-lg px-3 text-sm font-semibold ${tab === t ? "bg-surface shadow-sm" : "text-muted"}`}>{t}</button>
         ))}
       </div>
+
+      {tab === "Mapa" ? (
+        <MapaCasa espacios={espacios} reservas={reservas} directores={directores} camaras={camaras} mantenimiento={casa.MANTENIMIENTO} ahora={ahora} />
+      ) : null}
 
       {tab === "Reservas" ? (
         <>
@@ -115,7 +121,7 @@ export function PanelCasa({ espacios, reservas, directores, casa }: { espacios: 
             <p className="text-xs text-muted">Las ventas son simuladas. El porcentaje y el alquiler son los del acuerdo.</p>
           </Card>
           <Card title="Gastos fijos de la casa" subtitle="Octubre, en dólares">
-            <BarrasHorizontales data={casa.GASTOS_FIJOS} x="concepto" y="monto" nombre="Gasto" sufijo=" $" color="var(--series-2)" />
+            <BarrasHorizontales data={casa.GASTOS_FIJOS} x="concepto" y="monto" nombre="Gasto" sufijo=" $" color="var(--series-1)" />
           </Card>
         </Grid>
       ) : null}
@@ -145,7 +151,7 @@ export function PanelCasa({ espacios, reservas, directores, casa }: { espacios: 
           <Card title="Limpieza de hoy" subtitle="Checklist diario por área">
             <ul className="flex flex-col gap-2 text-sm">
               {casa.LIMPIEZA.map((l) => (
-                <li key={l.area}><label className="flex min-h-10 items-center gap-3"><input type="checkbox" defaultChecked={l.hecho} className="size-5 accent-[#1e3a8a]" />{l.area}</label></li>
+                <li key={l.area}><label className="flex min-h-10 items-center gap-3"><input type="checkbox" defaultChecked={l.hecho} className="size-5 accent-brand" />{l.area}</label></li>
               ))}
             </ul>
           </Card>

@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { ChevronRight } from "lucide-react";
+import { integrantesDe } from "@/lib/data/apostolados";
 import { AvisoSimulado, Badge, Card, Grid, PageHeader } from "@/components/ui";
 import { BarrasHorizontales } from "@/components/charts";
 import { db, economiaPorArea, nombreCompleto, persona } from "@/lib/data/repo";
@@ -14,7 +17,7 @@ export default function Apostolados() {
 
   return (
     <>
-      <PageHeader title="Apostolados" description="Cada apostolado conserva su Gmail y sus Google Forms; aquí se conectan sus hojas de respuestas y se ve su gente y su economía." />
+      <PageHeader title="Apostolados" description="Selecciona un apostolado para ver sus datos, integrantes, documentos, economía, minutas y enlaces." />
       <AvisoSimulado />
       <Grid min={300}>
         {db.apostolados.map((a) => {
@@ -22,15 +25,22 @@ export default function Apostolados() {
           const acts = db.actividades.filter((x) => x.apostoladoId === a.id);
           const conectados = acts.filter((x) => x.formularioConectado).length;
           return (
-            <Card key={a.id} title={a.nombre} subtitle={a.descripcion}>
+            <Link key={a.id} href={`/apostolados/${a.id}`} className="group flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 text-ink no-underline transition-colors hover:border-brand">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex flex-col gap-0.5">
+                  <h2 className="text-base font-extrabold">{a.nombre}</h2>
+                  <p className="text-xs text-muted">{a.descripcion}</p>
+                </div>
+                <ChevronRight size={20} aria-hidden className="shrink-0 text-muted transition-transform group-hover:translate-x-0.5 group-hover:text-accent" />
+              </div>
               <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-sm">
                 <dt className="text-muted">Director</dt><dd>{a.directorId ? nombreCompleto(persona(a.directorId)) : "—"}</dd>
-                <dt className="text-muted">Ecónomo</dt><dd>{a.economoId ? nombreCompleto(persona(a.economoId)) : "Sin asignar"}</dd>
+                <dt className="text-muted">Integrantes</dt><dd>{integrantesDe(a.id).filter((x) => !x.hasta).length} activos</dd>
                 <dt className="text-muted">Actividades</dt><dd>{acts.length}</dd>
                 <dt className="text-muted">Formularios</dt><dd>{conectados ? <Badge tone="good">{conectados} conectado{conectados > 1 ? "s" : ""}</Badge> : <Badge tone="warn">Sin conectar</Badge>}</dd>
                 {e ? (<><dt className="text-muted">Resultado 6 meses</dt><dd className={e.ganancia >= 0 ? "font-bold text-good-ink" : "font-bold text-warn-ink"}>{usd(e.ganancia)}</dd></>) : null}
               </dl>
-            </Card>
+            </Link>
           );
         })}
       </Grid>

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { AvisoSimulado, PageHeader, LinkButton } from "@/components/ui";
 import { db, nombreArea, deudores } from "@/lib/data/repo";
 import { PanelEconomia } from "./panel";
@@ -15,7 +16,9 @@ export default function Economia() {
         actions={<><LinkButton href="#" variant="secondary">Exportar a Excel</LinkButton><LinkButton href="#">Generar informe mensual (Word)</LinkButton></>}
       />
       <AvisoSimulado />
-      <PanelEconomia movimientos={db.movimientos} areas={areas} deudores={deuda.slice(0, 8).map((d) => ({ id: d.id, nombre: `${d.persona.nombre} ${d.persona.apellido}`, deuda: Math.round(d.deuda), pagado: Math.round(d.pagado) }))} totalDeudores={deuda.length} />
+      <Suspense>
+        <PanelEconomia movimientos={db.movimientos} areas={areas} deudores={deuda.slice(0, 8).map((d) => ({ id: d.id, nombre: `${d.persona.nombre} ${d.persona.apellido}`, deuda: Math.round(d.deuda), pagado: Math.round(d.pagado) }))} totalDeudores={deuda.length} />
+      </Suspense>
     </>
   );
 }

@@ -35,7 +35,7 @@ export default function Calendario() {
             <div className="grid min-w-[560px] grid-cols-7 gap-1 text-xs">
               {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((d) => <div key={d} className="px-1 py-1 font-bold text-muted">{d}</div>)}
               {celdas.map((d, i) => (
-                <div key={i} className={`min-h-20 rounded-lg border p-1.5 ${d ? "border-border bg-surface" : "border-transparent"} ${d && iso(d) === iso(HOY) ? "ring-2 ring-[#1e3a8a]" : ""}`}>
+                <div key={i} className={`min-h-20 rounded-lg border p-1.5 ${d ? "border-border bg-surface" : "border-transparent"} ${d && iso(d) === iso(HOY) ? "ring-2 ring-brand" : ""}`}>
                   {d ? (
                     <>
                       <span className="font-bold">{d.getDate()}</span>

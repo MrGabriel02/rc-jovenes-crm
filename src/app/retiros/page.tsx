@@ -36,7 +36,7 @@ export default function Retiros() {
           <ul className="flex flex-col gap-2 text-sm">
             {TAREAS_TRIDUO.map((t) => (
               <li key={t.tarea} className="flex items-center gap-3">
-                <input type="checkbox" defaultChecked={t.hecha} aria-label={t.tarea} className="size-5 accent-[#1e3a8a]" />
+                <input type="checkbox" defaultChecked={t.hecha} aria-label={t.tarea} className="size-5 accent-brand" />
                 <span className="flex-1">{t.tarea}</span>
                 <Badge>{t.dia < 0 ? `D${t.dia}` : `D+${t.dia}`}</Badge>
                 <span className="w-28 text-xs text-muted">{t.responsable}</span>

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { db } from "@/lib/data/repo";
 import { FormularioReserva } from "./formulario";
 
@@ -10,7 +11,9 @@ export default function Reservar() {
         <h1 className="text-2xl font-extrabold">Solicitar un espacio de la casa</h1>
         <p className="text-sm text-muted">Enlace público (también con QR). La solicitud queda pendiente hasta que la aprueben los directores de sección.</p>
       </header>
-      <FormularioReserva espacios={db.espacios.filter((e) => e.tipo !== "cafetin")} reservas={db.reservas} />
+      <Suspense>
+        <FormularioReserva espacios={db.espacios.filter((e) => e.tipo !== "cafetin")} reservas={db.reservas} />
+      </Suspense>
     </>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Badge, Card, Grid, Kpi, Table } from "@/components/ui";
 import { BarrasHorizontales, IngresosGastos } from "@/components/charts";
 import { aUSD, porCategoria, resultado, saldoPorCustodio, usd, bs } from "@/lib/domain/economia";
@@ -9,7 +10,8 @@ import type { MovimientoEconomico } from "@/lib/domain/types";
 const MESES = [["", "Últimos 6 meses"], ["05", "Mayo"], ["06", "Junio"], ["07", "Julio"], ["08", "Agosto"], ["09", "Septiembre"], ["10", "Octubre"]] as const;
 
 export function PanelEconomia({ movimientos, areas, deudores, totalDeudores }: { movimientos: MovimientoEconomico[]; areas: { id: string; nombre: string }[]; deudores: { id: string; nombre: string; deuda: number; pagado: number }[]; totalDeudores: number }) {
-  const [area, setArea] = useState("");
+  const params = useSearchParams();
+  const [area, setArea] = useState(params.get("area") ?? "");
   const [mes, setMes] = useState("");
   const enArea = useMemo(() => movimientos.filter((m) => !area || m.areaId === area), [movimientos, area]);
   const sel = useMemo(() => enArea.filter((m) => !mes || m.fecha.slice(5, 7) === mes), [enArea, mes]);
@@ -47,7 +49,7 @@ export function PanelEconomia({ movimientos, areas, deudores, totalDeudores }: {
           <IngresosGastos data={serie} />
         </Card>
         <Card title="En qué se gasta" subtitle="Gastos por categoría, en dólares">
-          <BarrasHorizontales data={porCategoria(sel, "gasto").map((c) => ({ ...c, usd: Math.round(c.usd) }))} x="categoria" y="usd" nombre="Gasto" sufijo=" $" color="var(--series-2)" />
+          <BarrasHorizontales data={porCategoria(sel, "gasto").map((c) => ({ ...c, usd: Math.round(c.usd) }))} x="categoria" y="usd" nombre="Gasto" sufijo=" $" color="var(--series-1)" />
         </Card>
         <Card title="Dónde está el dinero" subtitle="Saldo por custodio, incluidas cuentas personales">
           <ul className="flex flex-col gap-2 text-sm">
