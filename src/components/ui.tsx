@@ -160,6 +160,7 @@ export function Grid({ children, min = 320 }: { children: ReactNode; min?: numbe
 export function BarrasLista({ datos, total }: { datos: { etiqueta: string; n: number }[]; total?: number }) {
   const t = total ?? datos.reduce((a, d) => a + d.n, 0);
   const max = Math.max(1, ...datos.map((d) => d.n));
+  // Con total, cada barra es su porcentaje del total; sin él, se compara con la mayor.
   return (
     <ul className="flex flex-col gap-2.5">
       {datos.map((d) => (
@@ -169,7 +170,7 @@ export function BarrasLista({ datos, total }: { datos: { etiqueta: string; n: nu
             <span className="tabular-nums"><strong>{d.n}</strong> <span className="text-xs text-muted">{t ? Math.round((d.n / t) * 100) : 0} %</span></span>
           </span>
           <span className="h-2 overflow-hidden rounded-full bg-surface-2" aria-hidden>
-            <span className="block h-full rounded-full bg-[var(--series-1)]" style={{ width: `${(d.n / max) * 100}%` }} />
+            <span className="block h-full rounded-full bg-[var(--series-1)]" style={{ width: `${(d.n / (total ?? max)) * 100}%` }} />
           </span>
         </li>
       ))}

@@ -14,19 +14,21 @@ Panel de gestión de la sección de Jóvenes de Regnum Christi Barquisimeto. Es 
 | `/seguimiento` | Seguimiento | Tablero post retiro D0 a D+15 con WhatsApp en un clic, tasas de respuesta y rechazo, barra por paso y archivo de retiros completados |
 | `/equipos` | Equipos | Panel por ciudad, eventos por tipo, comparación de equipos, lista de espera con sugerencia de equipo, retirados y foráneos; ficha del equipo con info para el responsable, asistencia, integrantes, foto e inquietudes |
 | `/promocion` | Promoción | Directorio de colegios, parroquias y otros; embajadores por promoción y de parroquia (Samuel y Emaús); envío de flyer; grupos de voluntarios y sugerencias |
-| `/direccion-espiritual` | Dirección espiritual | Cobertura, confirmación de citas por el director, enlace y QR a la agenda de citas |
-| `/apostolados` | Apostolados | Página por apostolado con datos, integrantes, documentos, economía, minutas y enlaces |
-| `/formacion` | Formación | Charla mensual, banco de ponentes y evaluación de formadores |
-| `/retiros` | Retiros | Triduo y EE: menú, calculadora de compras, tareas e invitados |
-| `/economia` | Economía | Ingresos y gastos en USD y Bs a tasa BCV, 10 % sobre la ganancia, abonos y custodios |
+| `/direccion-espiritual` | Dirección espiritual | DE y diálogo apostólico: semana por director, "ver como" (cada director ve solo lo suyo), mensaje para confirmar las citas del día, aviso de citas sin marcar, dirigidos por director, enlaces y QR, alta de directores con Google Calendar |
+| `/apostolados` | Apostolados | Página por apostolado con logo, formularios y tablas, próximos retiros con cuenta regresiva, retiros por ciudad, servidores por retiro, retención, economía por retiro (comparación y mínimo para no perder), documentos e integrantes |
+| `/formacion` | Formación | Charlas en orden cronológico y banco de ponentes (agregar, editar y eliminar), historial, asistencia por charla y temas de interés |
+| `/retiros` | Retiros | Triduo y EE por año o en general: formulario conectado y sincronización, seguimiento de invitados (hoja Asociaciones), acta de asociación, formadores por invitar, pagos en Bs y $, generador del formulario, proveedores, menú editable con lista de compras por tipo de alimento y tareas exportables |
+| `/economia` | Economía | Ingresos y gastos en USD y Bs a tasa BCV, 10 % sobre la ganancia, abonos, custodios e informes económicos por apostolado (pendientes a los 7 días del retiro) |
 | `/casa` | La casa | Mapa interactivo de los 3 niveles, horario de misas y adoración que bloquea la capilla, reservas con doble aprobación, coworking, cafetín, inventario, mantenimiento y limpieza |
 | `/camaras` | Cámaras | Las 4 cámaras YI Home 1080p (jardín, área común y terraza), estado de las microSD, eventos y guía de conexión |
+| `/formador` | App de formadores | Inicio limpio para el formador: carta del día, su apostolado, próximos retiros, recordatorios de reuniones y calendario |
+| `/inscripcion` | Inscripción pública | Formulario para entrar a la base o a una actividad, desde el enlace de Configuración |
 | `/reservar` | Formulario público | Solicitud de reserva con choque de horarios y precio por bloque de 1,5 h |
 | `/comunicaciones` | Comunicaciones | Estadísticas de Instagram de la sección y del director, plantillas |
 | `/notificaciones` | Notificaciones | Avisos a todos, un rol, un equipo, un apostolado o personas; por app, WhatsApp o correo; al momento o programados |
 | `/albumes` | Álbumes | Enlaces de Drive y Google Fotos por apostolado y actividad, y los compartidos con la cuenta de la sección |
 | `/documentos` | Documentos | Repositorio (Google Drive) e informes mensuales |
-| `/configuracion` | Configuración | Roles editables con matriz de permisos, tarifas y conexiones |
+| `/configuracion` | Configuración | Enlace e QR de inscripción, acceso a la app de formadores, roles editables con matriz de permisos y conexiones |
 
 ## Imágenes de las fiestas
 

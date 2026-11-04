@@ -1,66 +1,39 @@
-import { AvisoSimulado, Badge, Card, Grid, PageHeader, Table, LinkButton } from "@/components/ui";
-import { NOMBRE_OBLIGATORIA, OBLIGATORIAS_FORMADOR, evaluarFormador, type Obligatoria } from "@/lib/domain/formadores";
-import { db, nombreCompleto, persona } from "@/lib/data/repo";
+import { AvisoSimulado, PageHeader } from "@/components/ui";
+import { HOY } from "@/lib/domain/fechas";
+import { PanelFormacion, type Charla, type Ponente } from "./panel";
 
 export const metadata = { title: "Formación" };
 
-const PONENTES = [
-  { nombre: "[Ponente 1]", temas: ["Teología del cuerpo", "Afectividad"], charlas: 3, ultima: "2026-06-14" },
-  { nombre: "[Ponente 2]", temas: ["Doctrina social de la Iglesia"], charlas: 1, ultima: "2026-03-21" },
-  { nombre: "[Ponente 3]", temas: ["Biblia", "Lectio divina"], charlas: 2, ultima: "2026-09-13" },
-  { nombre: "[Ponente 4]", temas: ["Vocación y discernimiento"], charlas: 2, ultima: "2026-10-18" },
+// Datos SIMULADOS: ningún ponente ni teléfono es real.
+const PONENTES: Ponente[] = [
+  { id: "pn1", nombre: "Andrea Colmenárez", telefono: "0414-000-1101", tema: "Afectividad y noviazgo", profesion: "Psicóloga" },
+  { id: "pn2", nombre: "P. Rafael Mendoza", telefono: "0424-000-1102", tema: "Doctrina social de la Iglesia", profesion: "Sacerdote" },
+  { id: "pn3", nombre: "Luis Escalona", telefono: "0412-000-1103", tema: "Biblia y lectio divina", profesion: "Teólogo" },
+  { id: "pn4", nombre: "María Gabriela Pérez", telefono: "0416-000-1104", tema: "Vocación y discernimiento", profesion: "Consagrada" },
+  { id: "pn5", nombre: "José Daniel Rivas", telefono: "0414-000-1105", tema: "Fe y trabajo", profesion: "Ingeniero y empresario" },
 ];
-const CHARLAS = [
-  { mes: "Noviembre 2026", fecha: "Sáb 15 nov", tema: "[Tema por definir]", ponente: null },
-  { mes: "Diciembre 2026", fecha: "Sáb 13 dic", tema: "Adviento: esperar con esperanza", ponente: "[Ponente 3]" },
-  { mes: "Enero 2027", fecha: "Sáb 17 ene", tema: "[Tema por definir]", ponente: null },
+const CHARLAS: Charla[] = [
+  { id: "c1", fecha: "2026-03-21", tema: "Doctrina social de la Iglesia", ponenteId: "pn2", asistentes: 34 },
+  { id: "c2", fecha: "2026-04-18", tema: "Pascua: el sepulcro vacío", ponenteId: "pn3", asistentes: 41 },
+  { id: "c3", fecha: "2026-05-16", tema: "Fe y trabajo", ponenteId: "pn5", asistentes: 29 },
+  { id: "c4", fecha: "2026-06-13", tema: "Afectividad y noviazgo", ponenteId: "pn1", asistentes: 57 },
+  { id: "c5", fecha: "2026-09-12", tema: "Lectio divina en la vida diaria", ponenteId: "pn3", asistentes: 38 },
+  { id: "c6", fecha: "2026-10-17", tema: "Vocación y discernimiento", ponenteId: "pn4", asistentes: 46 },
+  { id: "c7", fecha: "2026-11-15", tema: "Santidad en lo ordinario", ponenteId: null, asistentes: null },
+  { id: "c8", fecha: "2026-12-12", tema: "Adviento: esperar con esperanza", ponenteId: "pn3", asistentes: null },
+  { id: "c9", fecha: "2027-01-16", tema: "Propósitos con sentido", ponenteId: null, asistentes: null },
+];
+const TEMAS = [
+  { tema: "Redes sociales y vida interior", votos: 12 }, { tema: "Finanzas personales con criterio cristiano", votos: 9 },
+  { tema: "Cómo rezar el rosario sin distraerse", votos: 7 }, { tema: "Ciencia y fe", votos: 6 }, { tema: "Perdón y sanación", votos: 5 },
 ];
 
 export default function Formacion() {
-  const formadores = db.equipos.map((e) => e.responsableId);
-  const asistencias: Record<string, Partial<Record<Obligatoria, boolean>>> = Object.fromEntries(
-    formadores.map((f, i) => [f, { retiro_anual: i % 5 !== 3, vfc: i % 4 !== 1, fin_semana_formadores: i % 3 !== 2 && i !== 7 }]),
-  );
-  asistencias[formadores[7]] = { retiro_anual: false, vfc: false, fin_semana_formadores: false };
-  const realizadas = [...OBLIGATORIAS_FORMADOR];
-
   return (
     <>
-      <PageHeader title="Formación" description="Charla mensual con banco de ponentes, círculos de estudio y seguimiento de formadores." actions={<LinkButton href="#">Agregar ponente</LinkButton>} />
+      <PageHeader title="Formación" description="Charla mensual con banco de ponentes, historial de temas y asistencia." />
       <AvisoSimulado />
-      <Grid min={360}>
-        <Card title="Próximas charlas mensuales">
-          <ul className="flex flex-col gap-2">
-            {CHARLAS.map((c) => (
-              <li key={c.mes} className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-surface-2 p-3 text-sm">
-                <span className="flex flex-col"><strong>{c.fecha}</strong><span className="text-xs text-muted">{c.tema}</span></span>
-                {c.ponente ? <Badge tone="good">{c.ponente}</Badge> : <Badge tone="warn">Asignar ponente</Badge>}
-              </li>
-            ))}
-          </ul>
-        </Card>
-        <Card title="Banco de ponentes">
-          <Table head={["Ponente", "Temas", "Charlas", "Última"]} minWidth={420}>
-            {PONENTES.map((p) => (
-              <tr key={p.nombre}><td className="font-semibold">{p.nombre}</td><td>{p.temas.join(", ")}</td><td>{p.charlas}</td><td>{new Date(`${p.ultima}T12:00:00`).toLocaleDateString("es-VE")}</td></tr>
-            ))}
-          </Table>
-        </Card>
-      </Grid>
-      <Card title="Formadores: actividades obligatorias del año" subtitle="Cada falta avisa al encargado del CRM. Si no asiste a ninguna en el año, se propone su destitución al director de sección.">
-        <Table head={["Formador", ...realizadas.map((r) => NOMBRE_OBLIGATORIA[r]), "Estado"]} minWidth={640}>
-          {formadores.map((f) => {
-            const ev = evaluarFormador(asistencias[f], realizadas);
-            return (
-              <tr key={f}>
-                <td className="font-semibold">{nombreCompleto(persona(f))}</td>
-                {realizadas.map((r) => <td key={r}>{asistencias[f][r] ? <span className="text-good-ink">Asistió</span> : <span className="text-warn-ink">Faltó</span>}</td>)}
-                <td>{ev.proponerDestitucion ? <Badge tone="warn">Proponer destitución</Badge> : ev.faltas.length ? <Badge tone="accent">{ev.faltas.length} falta{ev.faltas.length > 1 ? "s" : ""}</Badge> : <Badge tone="good">Al día</Badge>}</td>
-              </tr>
-            );
-          })}
-        </Table>
-      </Card>
+      <PanelFormacion ponentesIni={PONENTES} charlasIni={CHARLAS} temasIni={TEMAS} hoy={HOY.toISOString().slice(0, 10)} />
     </>
   );
 }

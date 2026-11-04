@@ -13,6 +13,8 @@ export function Sidebar() {
   const pathname = usePathname();
   const [abierto, setAbierto] = useState(false);
   const activo = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
+  // La inscripción pública y la app de formadores se ven sin el menú de administración.
+  if (["/inscripcion", "/formador"].some((r) => pathname.startsWith(r))) return null;
 
   return (
     <nav aria-label="Módulos" className="bg-nav bg-[linear-gradient(180deg,var(--nav-2),var(--nav))] text-nav-ink transition-[width] lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-64 lg:shrink-0 lg:flex-col lg:overflow-y-auto plegado:lg:w-[76px]">

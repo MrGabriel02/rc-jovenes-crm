@@ -128,9 +128,14 @@ describe("menú de retiros", () => {
     ];
     const l = listaDeCompras(menu, 51, { "Harina de maíz": 5 });
     expect(l).toEqual([
-      { ingrediente: "Harina de maíz", unidad: "kg", necesario: 15.3, disponible: 5, faltante: 10.3 },
-      { ingrediente: "Queso", unidad: "kg", necesario: 2.6, disponible: 0, faltante: 2.6 },
+      { ingrediente: "Harina de maíz", unidad: "kg", necesario: 15.3, disponible: 5, faltante: 10.3, categoria: "Otros" },
+      { ingrediente: "Queso", unidad: "kg", necesario: 2.6, disponible: 0, faltante: 2.6, categoria: "Otros" },
     ]);
+  });
+
+  it("sube las porciones con el factor de apetito", () => {
+    const menu = [{ dia: "Sábado", momento: "Almuerzo", plato: "Pollo", ingredientes: [{ ingrediente: "Pollo", unidad: "kg", porPersona: 0.2, categoria: "Proteínas" as const }] }];
+    expect(listaDeCompras(menu, 50, {}, 1.4)[0]).toMatchObject({ necesario: 14, categoria: "Proteínas" });
   });
 });
 

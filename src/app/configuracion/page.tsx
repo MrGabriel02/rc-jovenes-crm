@@ -1,6 +1,8 @@
 import { AvisoSimulado, Badge, Card, Grid, PageHeader, Table } from "@/components/ui";
 import { db } from "@/lib/data/repo";
 import { MatrizRoles } from "./roles";
+import { EnlaceInscripcion } from "./enlace";
+import { HOY } from "@/lib/domain/fechas";
 
 export const metadata = { title: "Configuración" };
 
@@ -18,8 +20,9 @@ const INTEGRACIONES = [
 export default function Configuracion() {
   return (
     <>
-      <PageHeader title="Configuración" description="Roles y permisos por módulo, conexiones con Google y otros servicios." />
+      <PageHeader title="Configuración" description="Enlaces de inscripción, app de formadores, roles y permisos por módulo, y conexiones con Google y otros servicios." />
       <AvisoSimulado />
+      <EnlaceInscripcion destinos={db.actividades.filter((a) => a.inicio >= HOY.toISOString().slice(0, 10)).map((a) => ({ id: a.id, nombre: a.nombre }))} />
       <MatrizRoles roles={db.roles} />
       <Grid min={360}>
         <Card title="Integraciones">
