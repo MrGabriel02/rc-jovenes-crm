@@ -60,7 +60,7 @@ export const actividades: Actividad[] = [
   { id: "triduo26", nombre: "Triduo de renovación 2026", tipo: "retiro_seccion", apostoladoId: null, inicio: "2026-07-03", fin: "2026-07-05", lugar: "Casa de retiros", seguimientoPostRetiro: false },
   { id: "ee26", nombre: "Ejercicios Espirituales 2026", tipo: "retiro_seccion", apostoladoId: null, inicio: "2026-02-13", fin: "2026-02-15", lugar: "Casa de retiros", seguimientoPostRetiro: false },
   { id: "todosuno5", nombre: "Todos Uno, peregrinación 5", tipo: "retiro_apostolado", apostoladoId: "todosuno", inicio: "2026-09-12", fin: "2026-09-13", lugar: "Guanare", seguimientoPostRetiro: true },
-  { id: "he-nov", nombre: "Hora eucarística", tipo: "hora_eucaristica", apostoladoId: null, inicio: "2026-11-06T19:00:00", fin: "2026-11-06T20:00:00", lugar: "Capilla", seguimientoPostRetiro: false },
+  { id: "he-nov", nombre: "Hora eucarística de la localidad", tipo: "hora_eucaristica", apostoladoId: null, inicio: "2026-11-05T19:30:00", fin: "2026-11-05T20:30:00", lugar: "Localidad Regnum Christi", seguimientoPostRetiro: false },
   { id: "charla-nov", nombre: "Charla de formación de noviembre", tipo: "charla_formacion", apostoladoId: null, inicio: "2026-11-15T16:00:00", fin: "2026-11-15T18:00:00", lugar: "Auditorio", seguimientoPostRetiro: false },
   { id: "circulo-nov", nombre: "Círculo de estudio", tipo: "circulo_estudio", apostoladoId: null, inicio: "2026-11-11T19:00:00", fin: "2026-11-11T20:30:00", lugar: "Sala de conferencias", seguimientoPostRetiro: false },
   { id: "vfc26", nombre: "VFC 2026", tipo: "vfc", apostoladoId: null, inicio: "2026-11-21", fin: "2026-11-23", lugar: "[por definir]", seguimientoPostRetiro: false },
@@ -178,6 +178,9 @@ export const espacios: Espacio[] = [
   { id: "s3", nombre: "Salón 3", tipo: "salon_comun", capacidad: 12 },
   { id: "s4", nombre: "Salón 4", tipo: "salon_comun", capacidad: 10 },
   { id: "s5", nombre: "Salón 5", tipo: "salon_comun", capacidad: 10 },
+  { id: "s6", nombre: "Salón 6", tipo: "salon_comun", capacidad: 10 },
+  { id: "s7", nombre: "Salón 7", tipo: "salon_comun", capacidad: 10 },
+  { id: "s8", nombre: "Salón 8", tipo: "salon_comun", capacidad: 8 },
   { id: "conf", nombre: "Sala de conferencias", tipo: "conferencias", capacidad: 14 },
   { id: "aud", nombre: "Auditorio", tipo: "auditorio", capacidad: 144 },
   { id: "ter", nombre: "Terraza", tipo: "terraza", capacidad: 90 },
@@ -190,7 +193,7 @@ export const reservas: Reserva[] = [
   { id: "r2", espacioId: "conf", inicio: "2026-11-04T18:00:00", bloques: 2, solicitante: "Sección Señores", tipoSolicitante: "otra_seccion", responsable: "[responsable]", telefono: "", motivo: "Reunión de consejo", aprobaciones: ["dir1"] },
   { id: "r3", espacioId: "aud", inicio: "2026-11-15T16:00:00", bloques: 2, solicitante: "Formación", tipoSolicitante: "apostolado", responsable: "Coordinador de formación", telefono: "", motivo: "Charla mensual", aprobaciones: ["dir1", "dir2"] },
   { id: "r4", espacioId: "ter", inicio: "2026-11-08T10:00:00", bloques: 3, solicitante: "[empresa externa]", tipoSolicitante: "externo", responsable: "[contacto]", telefono: "", motivo: "Taller de networking", aprobaciones: [], pagado: false },
-  { id: "r5", espacioId: "cap", inicio: "2026-11-06T19:00:00", bloques: 1, solicitante: "Sección Jóvenes", tipoSolicitante: "apostolado", responsable: "Integración", telefono: "", motivo: "Hora eucarística", aprobaciones: ["dir1", "dir2"] },
+  { id: "r5", espacioId: "cap", inicio: "2026-11-07T10:00:00", bloques: 1, solicitante: "Sección Jóvenes", tipoSolicitante: "apostolado", responsable: "Integración", telefono: "", motivo: "Rosario de la sección", aprobaciones: ["dir1", "dir2"] },
   { id: "r6", espacioId: "s4", inicio: "2026-11-03T19:00:00", bloques: 1, solicitante: "Search", tipoSolicitante: "apostolado", responsable: "Director de Search", telefono: "", motivo: "Reunión del equipo organizador", aprobaciones: ["dir2"] },
 ];
 

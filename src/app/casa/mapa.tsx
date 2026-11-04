@@ -14,52 +14,73 @@ import type { Camara } from "@/lib/data/camaras";
  * Cada zona es un rectángulo en un viewBox por planta; las zonas con espacioId
  * son reservables y se conectan con reservas, tarifas y cámaras.
  */
-type Zona = { id: string; nombre: string; x: number; y: number; w: number; h: number; espacioId?: string; nota?: string; punteada?: boolean };
-type Planta = { id: "baja" | "alta" | "auditorio"; nombre: string; viewBox: string; zonas: Zona[] };
+type Zona = {
+  id: string; nombre: string; x: number; y: number; w: number; h: number;
+  espacioId?: string; nota?: string; punteada?: boolean; pasillo?: boolean;
+  /** Contorno irregular (path SVG) cuando la zona no es un rectángulo; x, y, w, h ubican la etiqueta. */
+  forma?: string;
+};
+type Planta = { id: "baja" | "primero" | "segundo"; nombre: string; viewBox: string; zonas: Zona[] };
+
+const P = (id: string, x: number, y: number, w: number, h: number): Zona => ({ id, nombre: "Pasillo", x, y, w, h, pasillo: true });
 
 const PLANTAS: Planta[] = [
   {
     id: "baja", nombre: "Planta baja", viewBox: "0 0 660 520",
     zonas: [
-      { id: "oficina", nombre: "Oficina", x: 15, y: 10, w: 85, h: 205 },
-      { id: "cap", nombre: "Capilla", x: 100, y: 10, w: 240, h: 205, espacioId: "cap" },
-      { id: "entrada", nombre: "Entrada", x: 340, y: 10, w: 110, h: 205 },
-      { id: "recepcion", nombre: "Recepción", x: 15, y: 215, w: 85, h: 80 },
-      { id: "bano1", nombre: "Baño 01", x: 15, y: 295, w: 85, h: 55 },
-      { id: "estar", nombre: "Estar", x: 100, y: 215, w: 240, h: 130 },
-      { id: "escalera-b", nombre: "Escalera", x: 340, y: 275, w: 105, h: 70 },
-      { id: "sacristia", nombre: "Sacristía", x: 450, y: 215, w: 45, h: 60 },
-      { id: "cafetin", nombre: "Cafetín", x: 495, y: 215, w: 140, h: 130, nota: "Paga 10 % de las ventas + alquiler" },
-      { id: "mesas-izq", nombre: "Mesas", x: 100, y: 345, w: 115, h: 70 },
-      { id: "conf", nombre: "Sala de conferencias", x: 215, y: 345, w: 235, h: 150, espacioId: "conf" },
-      { id: "mesas-der", nombre: "Mesas", x: 450, y: 345, w: 115, h: 150, nota: "Mesas del cafetín" },
-      { id: "bano2", nombre: "Baño 02", x: 565, y: 345, w: 70, h: 70 },
+      { id: "jardin-elevado", nombre: "Jardín elevado", x: 15, y: 15, w: 110, h: 490 },
+      { id: "jardin", nombre: "Jardín", x: 125, y: 15, w: 520, h: 170, nota: "Entrada a la casa. La cámara de afuera del auditorio mira hacia aquí." },
+      { id: "aud", nombre: "Auditorio", x: 125, y: 205, w: 400, h: 300, espacioId: "aud" },
+      { id: "escalera-aud", nombre: "Escalera", x: 525, y: 205, w: 120, h: 160, nota: "Sube al lado del auditorio y recorre los otros dos niveles" },
+      { id: "closet-aud", nombre: "Closet", x: 525, y: 385, w: 120, h: 55, nota: "Closet pequeño frente a la escalera del auditorio" },
+      P("pasillo-aud", 525, 440, 120, 65),
     ],
   },
   {
-    id: "alta", nombre: "Planta alta", viewBox: "0 0 900 540",
+    id: "primero", nombre: "Primer nivel", viewBox: "0 0 900 680",
     zonas: [
       { id: "s1", nombre: "Salón 1", x: 20, y: 10, w: 115, h: 290, espacioId: "s1" },
+      P("pasillo-s1", 20, 300, 115, 230),
       { id: "s2", nombre: "Salón 2", x: 135, y: 10, w: 170, h: 140, espacioId: "s2" },
+      P("pasillo-s2", 135, 150, 170, 45),
       { id: "banos-a", nombre: "Baños", x: 305, y: 10, w: 165, h: 105 },
-      { id: "s3", nombre: "Salón 3", x: 470, y: 10, w: 160, h: 220, espacioId: "s3" },
-      { id: "closets", nombre: "Oficina y closets", x: 135, y: 195, w: 170, h: 230 },
-      { id: "pasillo", nombre: "Pasillo y estar", x: 305, y: 115, w: 165, h: 415 },
-      { id: "escalera-a", nombre: "Escalera", x: 470, y: 230, w: 160, h: 105 },
+      { id: "s3", nombre: "Salón 3", x: 470, y: 10, w: 160, h: 170, espacioId: "s3" },
+      { id: "closet-s3", nombre: "Closet del Salón 3", x: 470, y: 180, w: 160, h: 50 },
+      { id: "cafetin", nombre: "Cafetín", x: 135, y: 195, w: 170, h: 230, nota: "Paga el 10 % de las ventas + USD 300 de alquiler al mes" },
+      P("pasillo-cafetin", 135, 425, 170, 105),
+      { id: "estar-1", nombre: "Pasillo y estar", x: 305, y: 335, w: 325, h: 195, forma: "M305,115 H470 V335 H630 V530 H305 Z" },
+      { id: "escalera-1", nombre: "Escalera", x: 470, y: 230, w: 160, h: 105, nota: "Viene del auditorio y sigue al segundo nivel" },
+      P("pasillo-norte", 630, 10, 255, 140),
       { id: "s4", nombre: "Salón 4", x: 630, y: 150, w: 160, h: 135, espacioId: "s4" },
-      { id: "deposito", nombre: "Depósitos", x: 790, y: 150, w: 95, h: 275 },
-      { id: "estar-a", nombre: "Estar", x: 470, y: 335, w: 160, h: 195 },
+      { id: "deposito", nombre: "Depósito", x: 790, y: 150, w: 95, h: 150 },
+      { id: "bano-deposito", nombre: "Baño", x: 790, y: 300, w: 95, h: 125, nota: "Baño del depósito, al lado del Salón 4" },
+      P("pasillo-s4", 630, 285, 160, 100),
       { id: "s5", nombre: "Salón 5", x: 630, y: 385, w: 160, h: 145, espacioId: "s5" },
+      P("pasillo-este", 790, 425, 95, 105),
+      { id: "ter", nombre: "Terraza", x: 20, y: 550, w: 865, h: 115, espacioId: "ter", punteada: true, nota: "Ubicación aproximada: falta el plano de la terraza. Tiene dos cámaras, una en cada extremo." },
     ],
   },
   {
-    id: "auditorio", nombre: "Auditorio y terraza", viewBox: "0 0 660 520",
+    id: "segundo", nombre: "Segundo nivel", viewBox: "0 0 660 520",
     zonas: [
-      { id: "esc", nombre: "Escenario", x: 210, y: 20, w: 215, h: 70 },
-      { id: "vestibulo", nombre: "Vestíbulo", x: 110, y: 90, w: 430, h: 125 },
-      { id: "jardin", nombre: "Jardín", x: 15, y: 215, w: 95, h: 190 },
-      { id: "aud", nombre: "Auditorio", x: 110, y: 215, w: 430, h: 190, espacioId: "aud" },
-      { id: "ter", nombre: "Terraza", x: 110, y: 425, w: 430, h: 80, espacioId: "ter", punteada: true, nota: "Ubicación aproximada: falta su plano" },
+      { id: "cap", nombre: "Capilla", x: 15, y: 10, w: 150, h: 205, espacioId: "cap", nota: "Misas y adoración bloquean la capilla en su horario" },
+      { id: "pasillo-capilla", nombre: "Pasillo", x: 165, y: 10, w: 40, h: 205, pasillo: true, nota: "Lleva al Salón 6" },
+      { id: "s6", nombre: "Salón 6", x: 205, y: 10, w: 135, h: 205, espacioId: "s6", nota: "Unido a la capilla a mitad del pasillo" },
+      { id: "entrada", nombre: "Entrada", x: 340, y: 10, w: 110, h: 205, nota: "Conecta con el pasillo y sigue hasta la escalera" },
+      { id: "oficina", nombre: "Oficina", x: 15, y: 215, w: 85, h: 80 },
+      { id: "bano1", nombre: "Baño 01", x: 15, y: 295, w: 85, h: 55 },
+      { id: "estar-2", nombre: "Pasillo y estar", x: 100, y: 215, w: 240, h: 130, nota: "Área común. La cámara de afuera de la oficina mira hacia aquí y a la escalera." },
+      P("pasillo-entrada", 340, 215, 110, 60),
+      { id: "escalera-2", nombre: "Escalera", x: 340, y: 275, w: 110, h: 70 },
+      { id: "sacristia", nombre: "Sacristía", x: 450, y: 215, w: 45, h: 60 },
+      P("pasillo-sacristia", 450, 275, 45, 70),
+      { id: "s7", nombre: "Salón 7", x: 495, y: 215, w: 140, h: 130, espacioId: "s7", nota: "Tiene closets; uno es el closet de limpieza" },
+      { id: "s8", nombre: "Salón 8", x: 100, y: 345, w: 115, h: 70, espacioId: "s8" },
+      P("pasillo-s8", 100, 415, 115, 80),
+      { id: "conf", nombre: "Sala de conferencias", x: 215, y: 345, w: 235, h: 150, espacioId: "conf" },
+      { id: "mesas", nombre: "Mesas", x: 450, y: 345, w: 115, h: 150 },
+      { id: "bano2", nombre: "Baño 02", x: 565, y: 345, w: 70, h: 70 },
+      P("pasillo-bano2", 565, 415, 70, 80),
     ],
   },
 ];
@@ -78,7 +99,7 @@ export function MapaCasa({ espacios, reservas, directores, camaras, mantenimient
   espacios: Espacio[]; reservas: Reserva[]; directores: string[]; camaras: Camara[];
   mantenimiento: { titulo: string; estado: string }[]; ahora: string;
 }) {
-  const [planta, setPlanta] = useState<Planta["id"]>("alta");
+  const [planta, setPlanta] = useState<Planta["id"]>("primero");
   const [sel, setSel] = useState<string>("s3");
   const p = PLANTAS.find((x) => x.id === planta)!;
   const t = new Date(ahora).getTime();
@@ -109,7 +130,7 @@ export function MapaCasa({ espacios, reservas, directores, camaras, mantenimient
           ))}
         </div>
         <svg viewBox={p.viewBox} role="group" aria-label={`Plano de ${p.nombre}`} className="h-auto w-full select-none">
-          {p.zonas.map((z) => {
+          {[...p.zonas.filter((z) => z.id !== zonaSel.id), zonaSel].map((z) => {
             const i = infoZona(z);
             const activa = z.id === zonaSel.id;
             const reservable = Boolean(z.espacioId);
@@ -120,21 +141,26 @@ export function MapaCasa({ espacios, reservas, directores, camaras, mantenimient
                 onClick={() => setSel(z.id)}
                 onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSel(z.id); } }}
                 className="cursor-pointer outline-none [&:focus-visible>rect]:stroke-[var(--gold)]">
-                <rect x={z.x} y={z.y} width={z.w} height={z.h} rx={6}
-                  fill={ESTILO[i.estado].fill}
-                  stroke={activa ? "var(--brand)" : "var(--border)"} strokeWidth={activa ? 4 : reservable ? 2 : 1.5}
-                  strokeDasharray={z.punteada ? "8 6" : undefined} />
+                {z.forma ? (
+                  <path d={z.forma} fill={ESTILO[i.estado].fill} stroke={activa ? "var(--brand)" : "var(--border)"} strokeWidth={activa ? 4 : 1.5} strokeLinejoin="round" />
+                ) : (
+                  <rect x={z.x} y={z.y} width={z.w} height={z.h} rx={6}
+                    fill={z.pasillo ? "var(--bg)" : ESTILO[i.estado].fill}
+                    stroke={activa ? "var(--brand)" : "var(--border)"} strokeWidth={activa ? 4 : reservable ? 2 : 1.5}
+                    strokeDasharray={z.punteada ? "8 6" : z.pasillo ? "3 4" : undefined} />
+                )}
                 <text x={z.x + z.w / 2} y={z.y + z.h / 2 - (z.espacioId ? 6 : 0)} textAnchor="middle" dominantBaseline="middle"
-                  fontSize={Math.min(16, (z.w - 8) / (z.nombre.length * 0.58))} fontWeight={reservable ? 800 : 600} fill={reservable ? "var(--ink)" : "var(--muted)"}>{z.nombre}</text>
+                  fontSize={Math.min(z.pasillo ? 12 : 16, ((z.w < 50 && z.h > 120 ? z.h : z.w) - 8) / (z.nombre.length * 0.58))} fontWeight={reservable ? 800 : z.pasillo ? 500 : 600} fill={reservable ? "var(--ink)" : "var(--muted)"}
+                  transform={z.w < 50 && z.h > 120 ? `rotate(-90 ${z.x + z.w / 2} ${z.y + z.h / 2})` : undefined}>{z.nombre}</text>
                 {i.esp?.capacidad ? (
                   <text x={z.x + z.w / 2} y={z.y + z.h / 2 + 16} textAnchor="middle" fontSize={13} fill="var(--ink-2)">{i.esp.capacidad} personas</text>
                 ) : null}
-                {i.cams.length ? (
-                  <g transform={`translate(${z.x + z.w - 26}, ${z.y + 8})`} aria-hidden>
+                {i.cams.map((c, n) => (
+                  <g key={c.id} transform={`translate(${z.x + z.w - 26 - n * 24}, ${z.y + 8})`} aria-hidden>
                     <rect width={18} height={18} rx={4} fill="var(--brand)" />
                     <circle cx={9} cy={9} r={4} fill="#fff" />
                   </g>
-                ) : null}
+                ))}
               </g>
             );
           })}

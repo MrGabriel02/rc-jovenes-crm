@@ -8,22 +8,26 @@ Panel de gestión de la sección de Jóvenes de Regnum Christi Barquisimeto. Es 
 
 | Ruta | Módulo | Qué hace hoy |
 |---|---|---|
-| `/` | Inicio | Dashboard con KPIs y tendencias, alertas, seguimiento del día, gráficos, la casa y las cámaras |
+| `/` | Inicio | Día litúrgico y frase del día, novedades, avance de los requisitos del P. Elías, KPIs, "Hoy toca", cumpleaños de formadores, gráficos, la casa y las cámaras |
 | `/personas` | Personas | Base CRM con filtros, ficha con historial y revisión de duplicados |
-| `/calendario` | Calendario | Actividades con cuenta regresiva y servidores |
+| `/calendario` | Calendario | Actividades, reservas, misas y fiestas litúrgicas con filtros, hora eucarística del primer jueves y cuenta regresiva |
 | `/seguimiento` | Seguimiento | Tablero post retiro D0, D+2, D+4, D+7, D+12 y D+15 con mensajes de WhatsApp en un clic |
-| `/equipos` | Equipos de reino | Asistencia a encuentros (móvil), alertas a 2 y 4 faltas seguidas |
+| `/equipos` | Equipos | Asistencia a encuentros (móvil), alertas a 2 y 4 faltas seguidas |
 | `/direccion-espiritual` | Dirección espiritual | Cobertura, confirmación de citas por el director, enlace y QR a la agenda de citas |
 | `/apostolados` | Apostolados | Página por apostolado con datos, integrantes, documentos, economía, minutas y enlaces |
 | `/formacion` | Formación | Charla mensual, banco de ponentes y evaluación de formadores |
 | `/retiros` | Retiros | Triduo y EE: menú, calculadora de compras, tareas e invitados |
 | `/economia` | Economía | Ingresos y gastos en USD y Bs a tasa BCV, 10 % sobre la ganancia, abonos y custodios |
-| `/casa` | La casa | Mapa interactivo por planta, reservas con doble aprobación, coworking, cafetín, inventario, mantenimiento y limpieza |
-| `/camaras` | Cámaras | Vista de las cámaras YI Home 1080p, estado de las microSD, eventos y guía de conexión |
+| `/casa` | La casa | Mapa interactivo de los 3 niveles, horario de misas y adoración que bloquea la capilla, reservas con doble aprobación, coworking, cafetín, inventario, mantenimiento y limpieza |
+| `/camaras` | Cámaras | Las 4 cámaras YI Home 1080p (jardín, área común y terraza), estado de las microSD, eventos y guía de conexión |
 | `/reservar` | Formulario público | Solicitud de reserva con choque de horarios y precio por bloque de 1,5 h |
 | `/comunicaciones` | Comunicaciones | Estadísticas de Instagram de la sección y del director, plantillas |
 | `/documentos` | Documentos | Repositorio (Google Drive) e informes mensuales |
 | `/configuracion` | Configuración | Roles editables con matriz de permisos, tarifas y conexiones |
+
+## Imágenes de las fiestas
+
+En solemnidades, fiestas y patronos RC, el inicio cambia la imagen de Cristo por la de la fiesta si existe `public/marca/fiestas/<clave>.jpg` (las claves están en `src/lib/domain/liturgia.ts`, por ejemplo `todos-los-santos`, `cristo-rey`, `inmaculada`, `guadalupe`, `divina-pastora`).
 
 ## Estructura
 
@@ -36,14 +40,14 @@ src/
   lib/data/repo.ts     capa de consultas que usan las páginas
 ```
 
-Las reglas de negocio están en `src/lib/domain` y se prueban en `reglas.test.ts`: pasos post retiro, faltas seguidas, alertas de DE, 10 % sobre la ganancia, duplicados por cédula/teléfono/nombre, tarifas y choques de reservas, y evaluación de formadores.
+Las reglas de negocio están en `src/lib/domain` y se prueban en `reglas.test.ts` y `liturgia.test.ts` (calendario litúrgico, horario de misas, edad y cumpleaños): pasos post retiro, faltas seguidas, alertas de DE, 10 % sobre la ganancia, duplicados por cédula/teléfono/nombre, tarifas y choques de reservas, y evaluación de formadores.
 
 ## Cómo correrlo
 
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # 27 pruebas de reglas de negocio
+npm test           # 40 pruebas de reglas de negocio
 npm run build      # build de producción
 ```
 

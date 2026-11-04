@@ -40,3 +40,25 @@ const fmtCorto = new Intl.DateTimeFormat("es-VE", { day: "numeric", month: "shor
 
 export const fechaLarga = (d: Date | string) => fmtLargo.format(typeof d === "string" ? new Date(d) : d);
 export const fechaCorta = (d: Date | string) => fmtCorto.format(typeof d === "string" ? new Date(d) : d);
+
+/** Edad cumplida a la fecha dada. */
+export function edad(fechaNacimiento: string, hoy: Date | string = HOY): number {
+  const n = soloFecha(fechaNacimiento);
+  const h = soloFecha(hoy);
+  let e = h.getFullYear() - n.getFullYear();
+  if (h.getMonth() < n.getMonth() || (h.getMonth() === n.getMonth() && h.getDate() < n.getDate())) e -= 1;
+  return e;
+}
+
+/** Días que faltan para el próximo cumpleaños (0 = hoy). El 29 de febrero se celebra el 28 en años no bisiestos. */
+export function diasParaCumpleanos(fechaNacimiento: string, hoy: Date | string = HOY): number {
+  const n = soloFecha(fechaNacimiento);
+  const h = soloFecha(hoy);
+  const en = (anio: number) => {
+    const bisiesto = new Date(anio, 1, 29).getMonth() === 1;
+    return new Date(anio, n.getMonth(), n.getMonth() === 1 && n.getDate() === 29 && !bisiesto ? 28 : n.getDate());
+  };
+  let prox = en(h.getFullYear());
+  if (prox < h) prox = en(h.getFullYear() + 1);
+  return diasEntre(h, prox);
+}

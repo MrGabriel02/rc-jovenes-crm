@@ -2,14 +2,14 @@ import Link from "next/link";
 import { AvisoSimulado, Badge, Card, Grid, Kpi, PageHeader, LinkButton } from "@/components/ui";
 import { alertasFaltas, asistenciaPorEquipo, db, nombreCompleto, persona } from "@/lib/data/repo";
 
-export const metadata = { title: "Equipos de reino" };
+export const metadata = { title: "Equipos" };
 
 export default function Equipos() {
   const asis = asistenciaPorEquipo();
   const alertas = alertasFaltas();
   return (
     <>
-      <PageHeader title="Equipos de reino" description="Encuentros semanales: Evangelio, meditación, caso de vida y repaso de compromisos. Solo los encuentros cuentan para las faltas." actions={<LinkButton href="#">Nuevo equipo</LinkButton>} />
+      <PageHeader title="Equipos" description="Encuentros semanales: Evangelio, meditación, caso de vida y repaso de compromisos. Solo los encuentros cuentan para las faltas." actions={<LinkButton href="#">Nuevo equipo</LinkButton>} />
       <AvisoSimulado />
       <Grid min={200}>
         <Kpi label="Equipos activos" value={db.equipos.length} />

@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button, Card } from "@/components/ui";
-import { conflictos, precioReserva } from "@/lib/domain/reservas";
+import { conflictos, precioReserva, MINUTOS_BLOQUE } from "@/lib/domain/reservas";
+import { choquesConCulto, horaLegible } from "@/lib/domain/culto";
 import { usd } from "@/lib/domain/economia";
 import type { Espacio, Reserva, TipoSolicitante } from "@/lib/domain/types";
 
@@ -21,6 +22,7 @@ export function FormularioReserva({ espacios, reservas }: { espacios: Espacio[];
   const esp = espacios.find((e) => e.id === espacioId)!;
   const nueva: Reserva = { id: "nueva", espacioId, inicio: `${fecha}T${horaIni}:00`, bloques, solicitante: "", tipoSolicitante: tipo, responsable: "", telefono: "", motivo: "", aprobaciones: [] };
   const choques = useMemo(() => conflictos(nueva, reservas, ["dir1", "dir2"]), [espacioId, fecha, horaIni, bloques, tipo]); // eslint-disable-line react-hooks/exhaustive-deps
+  const cultos = choquesConCulto({ espacioId, inicio: nueva.inicio, minutos: bloques * MINUTOS_BLOQUE });
   const precio = precioReserva(esp.tipo, bloques, tipo);
 
   return (
@@ -44,9 +46,9 @@ export function FormularioReserva({ espacios, reservas }: { espacios: Espacio[];
         <label className="flex flex-col gap-1 text-sm font-semibold">Número de personas<input className={campo} type="number" min={1} /></label>
         <div className="flex flex-col justify-end gap-2 rounded-xl bg-surface-2 p-3 text-sm">
           <span>Costo: <strong>{precio ? usd(precio) : "Sin costo"}</strong></span>
-          {choques.length ? <span className="font-semibold text-warn-ink" role="alert">Ese horario ya está ocupado o pendiente. Elige otra hora.</span> : <span className="text-good-ink">Horario disponible</span>}
+          {cultos.length ? <span className="font-semibold text-warn-ink" role="alert">La capilla tiene {cultos.map((c) => `${c.tipo.toLowerCase()} a las ${horaLegible(c.inicio)}`).join(" y ")}. Elige otra hora.</span> : choques.length ? <span className="font-semibold text-warn-ink" role="alert">Ese horario ya está ocupado o pendiente. Elige otra hora.</span> : <span className="text-good-ink">Horario disponible</span>}
         </div>
-        <div className="flex items-end"><Button type="submit" disabled={choques.length > 0}>Enviar solicitud</Button></div>
+        <div className="flex items-end"><Button type="submit" disabled={choques.length > 0 || cultos.length > 0}>Enviar solicitud</Button></div>
       </form>
       {enviado ? <p role="status" className="rounded-xl bg-good-bg p-3 text-sm text-good-ink">Solicitud enviada (demo). Los directores reciben una notificación para aprobarla y te confirmaremos por WhatsApp.</p> : null}
     </Card>
