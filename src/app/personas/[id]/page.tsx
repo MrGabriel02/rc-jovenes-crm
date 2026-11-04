@@ -22,7 +22,7 @@ export default async function FichaPersona({ params }: PageProps<"/personas/[id]
   return (
     <>
       <Link href="/personas" className="text-sm font-semibold">← Personas</Link>
-      <PageHeader title={nombreCompleto(p)} description={<>C.I. {p.cedula ?? "sin registrar"} · {p.profesion} · Zona {p.zona}</>} actions={<Badge tone={estado === "hace_vida" ? "good" : "neutral"}>{estado === "hace_vida" ? "Hace vida en la sección" : "De paso"}</Badge>} />
+      <PageHeader title={nombreCompleto(p)} description={<>C.I. {p.cedula ?? "sin registrar"} · {p.profesion} · Zona {p.zona}</>} actions={<Badge tone={estado === "hace_vida" ? "good" : "neutral"}>{estado === "hace_vida" ? "Hace vida en la sección" : "Han pasado"}</Badge>} />
       <AvisoSimulado />
       <Grid min={180}>
         <Kpi label="Actividades" value={hist.length} />

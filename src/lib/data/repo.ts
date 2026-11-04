@@ -1,7 +1,7 @@
 // Capa de datos. Hoy lee la semilla simulada en memoria; la interfaz está pensada para
 // reemplazarse por Firestore (colecciones con los mismos nombres) sin tocar las pantallas.
 import * as s from "./semilla";
-import { HOY, diasEntre, mesesEntre } from "../domain/fechas";
+import { HOY, diasEntre, diasParaCumpleanos, edad, mesesEntre } from "../domain/fechas";
 import { faltasSeguidas, nivelAlertaFaltas, porcentajeAsistencia } from "../domain/asistencia";
 import { cobertura, nivelAlertaDE, porConfirmar, realizadas, ultimaDE } from "../domain/direccion";
 import { pasosPendientes } from "../domain/seguimiento";
@@ -179,4 +179,24 @@ export function kpisInicio() {
     equipos: s.equipos.length,
     deRealizadasMes: realizadas(s.sesionesDE).filter((x) => x.inicio.startsWith("2026-10")).length,
   };
+}
+
+/** Formadores: responsables de equipo, directores y ecónomos de apostolado. */
+export function formadores() {
+  const cargos = new Map<string, string>();
+  for (const e of s.equipos) cargos.set(e.responsableId, `Responsable del equipo ${e.nombre}`);
+  for (const a of s.apostolados) {
+    if (a.directorId && !cargos.has(a.directorId)) cargos.set(a.directorId, `Director de ${a.nombre}`);
+    if (a.economoId && !cargos.has(a.economoId)) cargos.set(a.economoId, `Ecónomo de ${a.nombre}`);
+  }
+  return [...cargos].map(([id, cargo]) => ({ persona: persona(id), cargo }));
+}
+
+export function cumpleanosFormadores(dias = 30, hoy = HOY) {
+  return formadores()
+    .filter((f) => f.persona.fechaNacimiento)
+    .map((f) => ({ ...f, faltan: diasParaCumpleanos(f.persona.fechaNacimiento!, hoy), cumple: edad(f.persona.fechaNacimiento!, hoy) + 1 }))
+    .map((f) => ({ ...f, cumple: f.faltan === 0 ? f.cumple - 1 : f.cumple }))
+    .filter((f) => f.faltan <= dias)
+    .sort((a, b) => a.faltan - b.faltan);
 }

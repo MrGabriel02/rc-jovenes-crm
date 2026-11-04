@@ -69,7 +69,7 @@ export function Badge({ children, tone = "neutral" }: { children: ReactNode; ton
   return (
     <span
       className={clsx(
-        "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold",
+        "inline-flex items-center whitespace-nowrap rounded-md px-2 py-0.5 text-xs font-bold",
         tone === "accent" && "bg-accent-soft text-accent",
         tone === "warn" && "bg-warn-bg text-warn-ink",
         tone === "good" && "bg-good-bg text-good-ink",

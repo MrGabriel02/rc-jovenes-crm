@@ -8,7 +8,7 @@ export const MODULOS = [
   { href: "/personas", label: "Personas", icon: Users },
   { href: "/calendario", label: "Calendario", icon: CalendarDays },
   { href: "/seguimiento", label: "Seguimiento", icon: Route },
-  { href: "/equipos", label: "Equipos de reino", icon: UsersRound },
+  { href: "/equipos", label: "Equipos", icon: UsersRound },
   { href: "/direccion-espiritual", label: "Dirección espiritual", icon: HeartHandshake },
   { href: "/apostolados", label: "Apostolados", icon: Flag },
   { href: "/formacion", label: "Formación", icon: GraduationCap },

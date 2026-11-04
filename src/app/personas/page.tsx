@@ -18,7 +18,7 @@ export default function Personas() {
       <Grid min={200}>
         <Kpi label="Personas en la base" value={filas.length} />
         <Kpi label="Hacen vida en la sección" value={haceVida} />
-        <Kpi label="De paso" value={filas.length - haceVida} />
+        <Kpi label="Han pasado" value={filas.length - haceVida} />
         <Kpi label="Sin cédula registrada" value={filas.filter((p) => !p.cedula).length} tone="warn" note="Pedirla en la próxima inscripción" />
       </Grid>
       <Card>

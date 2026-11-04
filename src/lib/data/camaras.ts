@@ -10,7 +10,7 @@ export interface Camara {
   nombre: string;
   ubicacion: string;
   espacioId: string | null; // zona del mapa de la casa (espacio reservable o área común)
-  planta: "baja" | "alta" | "auditorio";
+  planta: "baja" | "primero" | "segundo";
   estado: EstadoCamara;
   sdUsadaGB: number;
   sdTotalGB: number;
@@ -21,19 +21,17 @@ export interface Camara {
 export const MODELO_CAMARA = { marca: "YI", modelo: "YI Home 1080p", codigo: "YYS.2016", resolucion: "1080p", almacenamiento: "microSD (hasta 64 GB)" };
 
 export const CAMARAS: Camara[] = [
-  { id: "c1", nombre: "Entrada principal", ubicacion: "Entrada, planta baja", espacioId: "entrada", planta: "baja", estado: "en_linea", sdUsadaGB: 41, sdTotalGB: 64, diasGrabados: 9, ultimoMovimiento: "2026-11-01T08:52:00" },
-  { id: "c2", nombre: "Capilla", ubicacion: "Capilla, planta baja", espacioId: "cap", planta: "baja", estado: "en_linea", sdUsadaGB: 22, sdTotalGB: 32, diasGrabados: 11, ultimoMovimiento: "2026-11-01T07:30:00" },
-  { id: "c3", nombre: "Pasillo de salones", ubicacion: "Pasillo central, planta alta", espacioId: "pasillo", planta: "alta", estado: "grabando_sd", sdUsadaGB: 60, sdTotalGB: 64, diasGrabados: 13, ultimoMovimiento: "2026-10-31T21:14:00" },
-  { id: "c4", nombre: "Cafetín y estar", ubicacion: "Cafetín, planta baja", espacioId: "cafetin", planta: "baja", estado: "en_linea", sdUsadaGB: 18, sdTotalGB: 64, diasGrabados: 4, ultimoMovimiento: "2026-11-01T08:47:00" },
-  { id: "c5", nombre: "Auditorio", ubicacion: "Auditorio", espacioId: "aud", planta: "auditorio", estado: "sin_conexion", sdUsadaGB: 0, sdTotalGB: 32, diasGrabados: 0, ultimoMovimiento: "2026-10-29T18:05:00" },
+  { id: "c1", nombre: "Jardín y entrada", ubicacion: "Afuera del auditorio, mirando al jardín (entrada) · planta baja", espacioId: "jardin", planta: "baja", estado: "en_linea", sdUsadaGB: 41, sdTotalGB: 64, diasGrabados: 9, ultimoMovimiento: "2026-11-01T08:52:00" },
+  { id: "c2", nombre: "Área común y escalera", ubicacion: "Afuera de la oficina, mirando al área común y a la escalera · segundo nivel", espacioId: "estar-2", planta: "segundo", estado: "en_linea", sdUsadaGB: 22, sdTotalGB: 32, diasGrabados: 11, ultimoMovimiento: "2026-11-01T08:40:00" },
+  { id: "c3", nombre: "Terraza (fondo)", ubicacion: "Al final de la terraza · primer nivel", espacioId: "ter", planta: "primero", estado: "grabando_sd", sdUsadaGB: 60, sdTotalGB: 64, diasGrabados: 13, ultimoMovimiento: "2026-10-31T21:14:00" },
+  { id: "c4", nombre: "Terraza (frente)", ubicacion: "Mirando al lado opuesto de la terraza · primer nivel", espacioId: "ter", planta: "primero", estado: "sin_conexion", sdUsadaGB: 0, sdTotalGB: 32, diasGrabados: 0, ultimoMovimiento: "2026-10-29T18:05:00" },
 ];
 
 export const EVENTOS_CAMARAS = [
-  { camaraId: "c1", fecha: "2026-11-01T08:52:00", tipo: "Movimiento", detalle: "Persona en la entrada" },
-  { camaraId: "c4", fecha: "2026-11-01T08:47:00", tipo: "Movimiento", detalle: "Apertura del cafetín" },
-  { camaraId: "c2", fecha: "2026-11-01T07:30:00", tipo: "Movimiento", detalle: "Limpieza de la capilla" },
-  { camaraId: "c3", fecha: "2026-10-31T21:14:00", tipo: "Movimiento fuera de horario", detalle: "Pasillo de salones después de las 9:00 p. m." },
-  { camaraId: "c5", fecha: "2026-10-29T18:05:00", tipo: "Sin conexión", detalle: "La cámara dejó de responder (revisar Wi-Fi o corriente)" },
+  { camaraId: "c1", fecha: "2026-11-01T08:52:00", tipo: "Movimiento", detalle: "Persona entrando por el jardín" },
+  { camaraId: "c2", fecha: "2026-11-01T08:40:00", tipo: "Movimiento", detalle: "Apertura de la oficina" },
+  { camaraId: "c3", fecha: "2026-10-31T21:14:00", tipo: "Movimiento fuera de horario", detalle: "Terraza después de las 9:00 p. m." },
+  { camaraId: "c4", fecha: "2026-10-29T18:05:00", tipo: "Sin conexión", detalle: "La cámara dejó de responder (revisar Wi-Fi o corriente)" },
   { camaraId: "c3", fecha: "2026-10-31T09:00:00", tipo: "Tarjeta casi llena", detalle: "microSD al 94 %: la cámara sobrescribe lo más antiguo" },
 ];
 
