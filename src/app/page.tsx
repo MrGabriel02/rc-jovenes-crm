@@ -83,7 +83,7 @@ export default function Inicio() {
         </div>
         {lit.rango === "solemnidad" || lit.rango === "fiesta" || lit.rc ? (
           <p className="absolute bottom-[132px] right-4 z-10 hidden max-w-[36%] rounded-full bg-black/45 px-3 py-1.5 text-right text-xs font-semibold backdrop-blur md:block">
-            {RANGO[lit.rango]} de {lit.nombre}{img.fiesta ? "" : " · imagen de la fiesta por cargar"}
+            {RANGO[lit.rango]} de {lit.nombre}
           </p>
         ) : null}
         <div className="relative z-10 flex flex-col gap-5 p-6 sm:p-8 md:max-w-[60%]">
