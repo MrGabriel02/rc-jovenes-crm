@@ -61,7 +61,7 @@ export function TableroSeguimiento({ retiros, pasos }: { retiros: RetiroSeg[]; p
                           href={enlaceWhatsApp(p.telefono, PLANTILLAS_WHATSAPP[hoy](p.primerNombre))}
                           target="_blank" rel="noreferrer"
                           onClick={() => setMarcados((m) => ({ ...m, [`${r.id}|${p.id}|${hoy}`]: "enviado" }))}
-                          className="inline-flex min-h-9 items-center gap-1 rounded-lg bg-[#1e3a8a] px-2.5 text-xs font-bold text-white no-underline"
+                          className="inline-flex min-h-9 items-center gap-1 rounded-lg bg-brand px-2.5 text-xs font-bold text-white no-underline"
                         ><MessageCircle size={14} aria-hidden />Enviar</a>
                         <button type="button" aria-label={`Marcar que ${p.primerNombre} respondió`} onClick={() => setMarcados((m) => ({ ...m, [`${r.id}|${p.id}|${hoy}`]: "respondio" }))} className="inline-flex min-h-9 items-center rounded-lg border border-border px-2 text-xs"><Check size={14} aria-hidden /></button>
                       </div>

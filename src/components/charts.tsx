@@ -38,9 +38,9 @@ export function IngresosGastos({ data, alto = 240 }: { data: Row[]; alto?: numbe
           <XAxis dataKey="mes" tick={eje} axisLine={false} tickLine={false} />
           <YAxis tick={eje} axisLine={false} tickLine={false} tickFormatter={(v: number) => `$${v.toLocaleString("es-VE")}`} width={64} />
           <Tooltip {...tooltipStyle} formatter={(v, n) => [`$${Number(v).toLocaleString("es-VE")}`, n]} />
-          <Legend iconType="square" wrapperStyle={{ fontSize: 12 }} />
-          <Bar dataKey="ingresos" name="Ingresos" fill="var(--series-1)" radius={[4, 4, 0, 0]} maxBarSize={18} />
-          <Bar dataKey="gastos" name="Gastos" fill="var(--series-2)" radius={[4, 4, 0, 0]} maxBarSize={18} />
+          <Legend iconType="square" wrapperStyle={{ fontSize: 12 }} formatter={(v) => <span style={{ color: "var(--ink-2)" }}>{v}</span>} />
+          <Bar dataKey="ingresos" name="Ingresos" fill="var(--series-2)" radius={[4, 4, 0, 0]} maxBarSize={18} />
+          <Bar dataKey="gastos" name="Gastos" fill="var(--series-1)" radius={[4, 4, 0, 0]} maxBarSize={18} />
         </BarChart>
       </ResponsiveContainer>
     </div>
@@ -72,7 +72,7 @@ export function Linea({ data, x, series, sufijo = "", alto = 220 }: { data: Row[
           <XAxis dataKey={x} tick={eje} axisLine={false} tickLine={false} />
           <YAxis tick={eje} axisLine={false} tickLine={false} unit={sufijo} domain={["auto", "auto"]} />
           <Tooltip {...tooltipStyle} cursor={{ stroke: "var(--border)" }} />
-          {series.length > 1 ? <Legend wrapperStyle={{ fontSize: 12 }} /> : null}
+          {series.length > 1 ? <Legend wrapperStyle={{ fontSize: 12 }} formatter={(v) => <span style={{ color: "var(--ink-2)" }}>{v}</span>} /> : null}
           {series.map((s) => (
             <Line key={s.clave} type="monotone" dataKey={s.clave} name={s.nombre} stroke={s.color} strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
           ))}

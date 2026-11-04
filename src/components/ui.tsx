@@ -13,9 +13,9 @@ export function PageHeader({ title, description, actions }: { title: string; des
   );
 }
 
-export function Card({ title, subtitle, action, children, className }: { title?: string; subtitle?: string; action?: ReactNode; children: ReactNode; className?: string }) {
+export function Card({ title, subtitle, action, children, className, id }: { title?: string; subtitle?: string; action?: ReactNode; children: ReactNode; className?: string; id?: string }) {
   return (
-    <section className={clsx("flex flex-col gap-4 rounded-2xl border border-border bg-surface p-5", className)}>
+    <section id={id} className={clsx("flex min-w-0 flex-col gap-4 rounded-2xl border border-border bg-surface p-5", className)}>
       {title ? (
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-col gap-0.5">
@@ -30,12 +30,37 @@ export function Card({ title, subtitle, action, children, className }: { title?:
   );
 }
 
-export function Kpi({ label, value, note, tone = "neutral" }: { label: string; value: ReactNode; note?: string; tone?: "neutral" | "good" | "warn" }) {
+export function Sparkline({ data, label }: { data: number[]; label: string }) {
+  if (data.length < 2) return null;
+  const w = 96, h = 32, min = Math.min(...data), max = Math.max(...data), r = max - min || 1;
+  const pts = data.map((v, i) => [(i / (data.length - 1)) * (w - 4) + 2, h - 3 - ((v - min) / r) * (h - 6)]);
+  const last = pts[pts.length - 1];
   return (
-    <div className="flex flex-col gap-1.5 rounded-2xl border border-border bg-surface p-5">
-      <span className="text-[13px] font-semibold text-muted">{label}</span>
-      <span className="text-3xl font-extrabold tracking-tight">{value}</span>
-      {note ? <span className={clsx("text-xs", tone === "good" ? "text-good-ink" : tone === "warn" ? "text-warn-ink" : "text-muted")}>{note}</span> : null}
+    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label={label} className="shrink-0 overflow-visible">
+      <polyline points={pts.map((p) => p.join(",")).join(" ")} fill="none" stroke="var(--series-1)" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+      <circle cx={last[0]} cy={last[1]} r={4} fill="var(--series-1)" stroke="var(--surface)" strokeWidth={2} />
+    </svg>
+  );
+}
+
+export function Kpi({ label, value, note, tone = "neutral", icon, trend, delta }: {
+  label: string; value: ReactNode; note?: string; tone?: "neutral" | "good" | "warn";
+  icon?: ReactNode; trend?: number[]; delta?: { valor: string; sube: boolean; bueno: boolean } | null;
+}) {
+  return (
+    <div className="flex flex-col gap-2 rounded-2xl border border-border bg-surface p-4 sm:p-5">
+      <div className="flex items-center gap-2">
+        {icon ? <span aria-hidden className="flex size-8 items-center justify-center rounded-lg bg-accent-soft text-accent">{icon}</span> : null}
+        <span className="text-[13px] font-semibold text-muted">{label}</span>
+      </div>
+      <div className="flex items-end justify-between gap-2">
+        <span className="text-3xl font-extrabold tracking-tight tabular-nums">{value}</span>
+        {trend ? <Sparkline data={trend} label={`Tendencia de ${label}`} /> : null}
+      </div>
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs">
+        {delta ? <span className={clsx("font-bold", delta.bueno ? "text-good-ink" : "text-warn-ink")}>{delta.sube ? "▲" : "▼"} {delta.valor}</span> : null}
+        {note ? <span className={clsx(tone === "good" ? "text-good-ink" : tone === "warn" ? "text-warn-ink" : "text-muted")}>{note}</span> : null}
+      </div>
     </div>
   );
 }
@@ -63,7 +88,7 @@ export function Button({ children, variant = "primary", ...rest }: React.ButtonH
       {...rest}
       className={clsx(
         "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold transition-colors disabled:opacity-50",
-        variant === "primary" ? "bg-[#1e3a8a] text-white hover:bg-[#172554]" : "border border-border bg-surface text-ink hover:bg-surface-2",
+        variant === "primary" ? "bg-brand text-white hover:bg-brand-hover" : "border border-border bg-surface text-ink hover:bg-surface-2",
         rest.className,
       )}
     >
@@ -72,7 +97,7 @@ export function Button({ children, variant = "primary", ...rest }: React.ButtonH
   );
 }
 
-export function LinkButton({ href, children, variant = "primary", external }: { href: string; children: ReactNode; variant?: "primary" | "secondary"; external?: boolean }) {
+export function LinkButton({ href, children, variant = "primary", external }: { href: string; children: ReactNode; variant?: "primary" | "secondary" | "light"; external?: boolean }) {
   return (
     <a
       href={href}
@@ -80,7 +105,9 @@ export function LinkButton({ href, children, variant = "primary", external }: { 
       rel={external ? "noreferrer" : undefined}
       className={clsx(
         "inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold no-underline",
-        variant === "primary" ? "bg-[#1e3a8a] text-white hover:bg-[#172554]" : "border border-border bg-surface text-ink hover:bg-surface-2",
+        variant === "primary" && "bg-brand text-white hover:bg-brand-hover",
+        variant === "secondary" && "border border-border bg-surface text-ink hover:bg-surface-2",
+        variant === "light" && "bg-white/15 text-white ring-1 ring-white/25 hover:bg-white/25",
       )}
     >
       {children}

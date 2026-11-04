@@ -1,6 +1,6 @@
 import {
   Home, Users, CalendarDays, Route, UsersRound, HeartHandshake, Flag, GraduationCap,
-  Tent, Wallet, Building2, Megaphone, FolderOpen, Settings,
+  Tent, Wallet, Building2, Cctv, Megaphone, FolderOpen, Settings,
 } from "lucide-react";
 
 export const MODULOS = [
@@ -15,6 +15,7 @@ export const MODULOS = [
   { href: "/retiros", label: "Retiros", icon: Tent },
   { href: "/economia", label: "Economía", icon: Wallet },
   { href: "/casa", label: "La casa", icon: Building2 },
+  { href: "/camaras", label: "Cámaras", icon: Cctv },
   { href: "/comunicaciones", label: "Comunicaciones", icon: Megaphone },
   { href: "/documentos", label: "Documentos", icon: FolderOpen },
   { href: "/configuracion", label: "Configuración", icon: Settings },

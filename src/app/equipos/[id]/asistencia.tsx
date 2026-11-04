@@ -29,7 +29,7 @@ export function PasarAsistencia({ miembros, fechas }: { miembros: Miembro[]; fec
                 type="button"
                 aria-pressed={on}
                 onClick={() => { setPresentes((p) => ({ ...p, [m.id]: !p[m.id] })); setGuardado(false); }}
-                className={`flex min-h-14 w-full items-center justify-between gap-3 rounded-xl border px-3 text-left text-sm ${on ? "border-[#1e3a8a] bg-accent-soft" : "border-border bg-surface"}`}
+                className={`flex min-h-14 w-full items-center justify-between gap-3 rounded-xl border px-3 text-left text-sm ${on ? "border-brand bg-accent-soft" : "border-border bg-surface"}`}
               >
                 <span className="flex flex-col">
                   <strong>{m.nombre}</strong>
@@ -37,7 +37,7 @@ export function PasarAsistencia({ miembros, fechas }: { miembros: Miembro[]; fec
                 </span>
                 <span className="flex items-center gap-2">
                   {nivel ? <Badge tone="warn">{m.faltas} faltas</Badge> : null}
-                  <span aria-hidden className={`flex size-6 items-center justify-center rounded-full border-2 ${on ? "border-[#1e3a8a] bg-[#1e3a8a] text-white" : "border-border"}`}>{on ? "✓" : ""}</span>
+                  <span aria-hidden className={`flex size-6 items-center justify-center rounded-full border-2 ${on ? "border-brand bg-brand text-white" : "border-border"}`}>{on ? "✓" : ""}</span>
                 </span>
               </button>
             </li>

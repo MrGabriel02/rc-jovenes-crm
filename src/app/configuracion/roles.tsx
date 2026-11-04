@@ -8,7 +8,7 @@ import type { Modulo, Rol } from "@/lib/domain/types";
 const CLAVE: Record<string, Modulo> = {
   "/": "inicio", "/personas": "personas", "/calendario": "calendario", "/seguimiento": "seguimiento", "/equipos": "equipos",
   "/direccion-espiritual": "direccion", "/apostolados": "apostolados", "/formacion": "formacion", "/retiros": "retiros",
-  "/economia": "economia", "/casa": "casa", "/comunicaciones": "comunicaciones", "/documentos": "documentos", "/configuracion": "configuracion",
+  "/economia": "economia", "/casa": "casa", "/camaras": "camaras", "/comunicaciones": "comunicaciones", "/documentos": "documentos", "/configuracion": "configuracion",
 };
 const SIG = { undefined: "leer", leer: "editar", editar: undefined } as const;
 const ALCANCE = { todo: "Todo", apostolado: "Su apostolado", equipo: "Su equipo", dirigidos: "Sus dirigidos" };
@@ -39,7 +39,7 @@ export function MatrizRoles({ roles }: { roles: Rol[] }) {
                   return (
                     <td key={m.href} className="px-1 py-1 text-center">
                       <button type="button" onClick={() => ciclar(r.id, CLAVE[m.href])} aria-label={`${r.nombre}, ${m.label}: ${p ?? "sin acceso"}`}
-                        className={`min-h-9 w-16 rounded-md text-[11px] font-bold ${p === "editar" ? "bg-[#1e3a8a] text-white" : p === "leer" ? "bg-accent-soft text-accent" : "bg-surface-2 text-muted"}`}>
+                        className={`min-h-9 w-16 rounded-md text-[11px] font-bold ${p === "editar" ? "bg-brand text-white" : p === "leer" ? "bg-accent-soft text-accent" : "bg-surface-2 text-muted"}`}>
                         {p === "editar" ? "Editar" : p === "leer" ? "Ver" : "—"}
                       </button>
                     </td>

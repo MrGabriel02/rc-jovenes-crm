@@ -8,17 +8,18 @@ Panel de gestión de la sección de Jóvenes de Regnum Christi Barquisimeto. Es 
 
 | Ruta | Módulo | Qué hace hoy |
 |---|---|---|
-| `/` | Inicio | KPIs, seguimiento del día, alertas y 6 gráficos de estadísticas |
+| `/` | Inicio | Dashboard con KPIs y tendencias, alertas, seguimiento del día, gráficos, la casa y las cámaras |
 | `/personas` | Personas | Base CRM con filtros, ficha con historial y revisión de duplicados |
 | `/calendario` | Calendario | Actividades con cuenta regresiva y servidores |
 | `/seguimiento` | Seguimiento | Tablero post retiro D0, D+2, D+4, D+7, D+12 y D+15 con mensajes de WhatsApp en un clic |
 | `/equipos` | Equipos de reino | Asistencia a encuentros (móvil), alertas a 2 y 4 faltas seguidas |
 | `/direccion-espiritual` | Dirección espiritual | Cobertura, confirmación de citas por el director, enlace y QR a la agenda de citas |
-| `/apostolados` | Apostolados | Integrantes, formularios conectados y quiénes pasaron por cada uno |
+| `/apostolados` | Apostolados | Página por apostolado con datos, integrantes, documentos, economía, minutas y enlaces |
 | `/formacion` | Formación | Charla mensual, banco de ponentes y evaluación de formadores |
 | `/retiros` | Retiros | Triduo y EE: menú, calculadora de compras, tareas e invitados |
 | `/economia` | Economía | Ingresos y gastos en USD y Bs a tasa BCV, 10 % sobre la ganancia, abonos y custodios |
-| `/casa` | La casa | Reservas con doble aprobación, coworking, cafetín, inventario, mantenimiento y limpieza |
+| `/casa` | La casa | Mapa interactivo por planta, reservas con doble aprobación, coworking, cafetín, inventario, mantenimiento y limpieza |
+| `/camaras` | Cámaras | Vista de las cámaras YI Home 1080p, estado de las microSD, eventos y guía de conexión |
 | `/reservar` | Formulario público | Solicitud de reserva con choque de horarios y precio por bloque de 1,5 h |
 | `/comunicaciones` | Comunicaciones | Estadísticas de Instagram de la sección y del director, plantillas |
 | `/documentos` | Documentos | Repositorio (Google Drive) e informes mensuales |

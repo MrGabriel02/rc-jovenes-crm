@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button, Card } from "@/components/ui";
 import { conflictos, precioReserva } from "@/lib/domain/reservas";
 import { usd } from "@/lib/domain/economia";
@@ -9,7 +10,9 @@ import type { Espacio, Reserva, TipoSolicitante } from "@/lib/domain/types";
 const campo = "min-h-11 rounded-xl border border-border bg-surface px-3 text-sm";
 
 export function FormularioReserva({ espacios, reservas }: { espacios: Espacio[]; reservas: Reserva[] }) {
-  const [espacioId, setEspacio] = useState(espacios[0].id);
+  const params = useSearchParams();
+  const pedido = params.get("espacio");
+  const [espacioId, setEspacio] = useState(espacios.some((e) => e.id === pedido) ? pedido! : espacios[0].id);
   const [fecha, setFecha] = useState("2026-11-04");
   const [horaIni, setHora] = useState("18:00");
   const [bloques, setBloques] = useState(1);

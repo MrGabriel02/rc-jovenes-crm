@@ -5,6 +5,8 @@ import { nivelAlertaDE, estadoEfectivo, cobertura, porConfirmar } from "./direcc
 import { resultado, deudaInscripcion, saldoPorCustodio } from "./economia";
 import { compararPersonas, normalizarTelefono } from "./duplicados";
 import { listaDeCompras } from "./menu";
+import { fueraDeHorario, porcentajeSD } from "../data/camaras";
+import { integrantesDe } from "../data/apostolados";
 import { precioReserva, seSolapan, estadoReserva, cobroCafetin } from "./reservas";
 import { evaluarFormador } from "./formadores";
 import { mesesEntre } from "./fechas";
@@ -163,5 +165,27 @@ describe("cafetín", () => {
   it("cobra el 10 % de cada venta más USD 300 de alquiler", () => {
     expect(cobroCafetin([100, 50.5])).toEqual({ totalVentas: 150.5, porcentaje: 15.05, alquiler: 300, total: 315.05 });
     expect(cobroCafetin([]).total).toBe(300);
+  });
+});
+
+describe("cámaras", () => {
+  it("marca el movimiento fuera del horario de la casa", () => {
+    expect(fueraDeHorario("2026-10-31T21:14:00")).toBe(true);
+    expect(fueraDeHorario("2026-10-31T06:59:00")).toBe(true);
+    expect(fueraDeHorario("2026-11-01T08:52:00")).toBe(false);
+  });
+  it("calcula el uso de la microSD", () => {
+    expect(porcentajeSD({ sdUsadaGB: 60, sdTotalGB: 64 })).toBe(94);
+    expect(porcentajeSD({ sdUsadaGB: 0, sdTotalGB: 0 })).toBe(0);
+  });
+});
+
+describe("apostolados", () => {
+  it("lista director y ecónomo como integrantes activos y separa a quienes ya pasaron", () => {
+    const lista = integrantesDe("search");
+    expect(lista[0].cargo).toBe("Director del apostolado");
+    expect(lista.some((x) => x.cargo === "Ecónomo")).toBe(true);
+    expect(lista.filter((x) => x.hasta).length).toBeGreaterThan(0);
+    expect(new Set(lista.map((x) => x.personaId)).size).toBe(lista.length);
   });
 });

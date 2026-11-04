@@ -9,9 +9,10 @@ export const metadata: Metadata = {
   title: { default: "RC Jóvenes", template: "%s · RC Jóvenes" },
   description: "Plataforma de gestión de la sección de Jóvenes de Regnum Christi Barquisimeto",
   appleWebApp: { capable: true, title: "RC Jóvenes", statusBarStyle: "default" },
+  icons: { icon: "/marca/icon-192.png", apple: "/marca/icon-192.png" },
 };
 
-export const viewport: Viewport = { themeColor: "#0f1b2d" };
+export const viewport: Viewport = { themeColor: "#8a1b24" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
