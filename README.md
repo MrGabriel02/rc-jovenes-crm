@@ -9,10 +9,11 @@ Panel de gestión de la sección de Jóvenes de Regnum Christi Barquisimeto. Es 
 | Ruta | Módulo | Qué hace hoy |
 |---|---|---|
 | `/` | Inicio | Día litúrgico y frase del día, novedades, avance de los requisitos del P. Elías, KPIs, "Hoy toca", cumpleaños de formadores, gráficos, la casa y las cámaras |
-| `/personas` | Personas | Base CRM con filtros, ficha con historial y revisión de duplicados |
-| `/calendario` | Calendario | Actividades, reservas, misas y fiestas litúrgicas con filtros, hora eucarística del primer jueves y cuenta regresiva |
-| `/seguimiento` | Seguimiento | Tablero post retiro D0, D+2, D+4, D+7, D+12 y D+15 con mensajes de WhatsApp en un clic |
-| `/equipos` | Equipos | Asistencia a encuentros (móvil), alertas a 2 y 4 faltas seguidas |
+| `/personas` | Personas | Base CRM con filtros por retiro, género, edad y profesión; edad automática; respuestas del formulario CRM; enlace de actualización; formularios sincronizados y datos faltantes |
+| `/calendario` | Calendario | Actividades, reservas, misas y fiestas litúrgicas con filtros, hora eucarística del primer jueves, cuenta regresiva y formulario para añadir actividad (revisa choques con la capilla) |
+| `/seguimiento` | Seguimiento | Tablero post retiro D0 a D+15 con WhatsApp en un clic, tasas de respuesta y rechazo, barra por paso y archivo de retiros completados |
+| `/equipos` | Equipos | Panel por ciudad, eventos por tipo, comparación de equipos, lista de espera con sugerencia de equipo, retirados y foráneos; ficha del equipo con info para el responsable, asistencia, integrantes, foto e inquietudes |
+| `/promocion` | Promoción | Directorio de colegios, parroquias y otros; embajadores por promoción y de parroquia (Samuel y Emaús); envío de flyer; grupos de voluntarios y sugerencias |
 | `/direccion-espiritual` | Dirección espiritual | Cobertura, confirmación de citas por el director, enlace y QR a la agenda de citas |
 | `/apostolados` | Apostolados | Página por apostolado con datos, integrantes, documentos, economía, minutas y enlaces |
 | `/formacion` | Formación | Charla mensual, banco de ponentes y evaluación de formadores |
@@ -22,6 +23,8 @@ Panel de gestión de la sección de Jóvenes de Regnum Christi Barquisimeto. Es 
 | `/camaras` | Cámaras | Las 4 cámaras YI Home 1080p (jardín, área común y terraza), estado de las microSD, eventos y guía de conexión |
 | `/reservar` | Formulario público | Solicitud de reserva con choque de horarios y precio por bloque de 1,5 h |
 | `/comunicaciones` | Comunicaciones | Estadísticas de Instagram de la sección y del director, plantillas |
+| `/notificaciones` | Notificaciones | Avisos a todos, un rol, un equipo, un apostolado o personas; por app, WhatsApp o correo; al momento o programados |
+| `/albumes` | Álbumes | Enlaces de Drive y Google Fotos por apostolado y actividad, y los compartidos con la cuenta de la sección |
 | `/documentos` | Documentos | Repositorio (Google Drive) e informes mensuales |
 | `/configuracion` | Configuración | Roles editables con matriz de permisos, tarifas y conexiones |
 

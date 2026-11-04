@@ -179,4 +179,4 @@ export interface Rol {
 export type Modulo =
   | "inicio" | "personas" | "calendario" | "seguimiento" | "equipos" | "direccion"
   | "apostolados" | "formacion" | "retiros" | "economia" | "casa" | "camaras"
-  | "comunicaciones" | "documentos" | "configuracion";
+  | "comunicaciones" | "documentos" | "configuracion" | "promocion" | "notificaciones" | "albumes";

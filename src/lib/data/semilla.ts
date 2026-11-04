@@ -97,8 +97,8 @@ export const seguimientos: SeguimientoPersona[] = participaciones
       pasos: gpr
         ? { grupo: "enviado", ofrecer_de: r < 0.45 ? "respondio" : "enviado", ofrecer_equipo: r < 0.3 ? "respondio" : r < 0.6 ? "enviado" : "pendiente", misa: "enviado" }
         : { grupo: "enviado" },
-      aceptoDE: gpr && r < 0.45,
-      aceptoEquipo: gpr && r < 0.3,
+      aceptoDE: gpr && r < 0.36,
+      aceptoEquipo: gpr && r < 0.22,
     } satisfies SeguimientoPersona;
   });
 
@@ -198,10 +198,10 @@ export const reservas: Reserva[] = [
 ];
 
 export const roles: Rol[] = [
-  { id: "admin", nombre: "Administrador CRM", alcance: "todo", permisos: Object.fromEntries((["inicio", "personas", "calendario", "seguimiento", "equipos", "direccion", "apostolados", "formacion", "retiros", "economia", "casa", "camaras", "comunicaciones", "documentos", "configuracion"] as const).map((m) => [m, "editar"])) },
-  { id: "director", nombre: "Director de sección", alcance: "todo", permisos: { inicio: "leer", personas: "leer", calendario: "editar", seguimiento: "leer", equipos: "editar", direccion: "leer", apostolados: "editar", formacion: "leer", retiros: "leer", economia: "leer", casa: "editar", camaras: "leer", documentos: "leer" } },
-  { id: "crecimiento", nombre: "Encargado de crecimiento", alcance: "todo", permisos: { inicio: "leer", personas: "editar", seguimiento: "editar", equipos: "editar", direccion: "leer", calendario: "leer" } },
-  { id: "responsable", nombre: "Responsable de equipo", alcance: "equipo", permisos: { equipos: "editar", calendario: "leer", retiros: "leer" } },
+  { id: "admin", nombre: "Administrador CRM", alcance: "todo", permisos: Object.fromEntries((["inicio", "personas", "calendario", "seguimiento", "equipos", "direccion", "apostolados", "formacion", "retiros", "economia", "casa", "camaras", "comunicaciones", "documentos", "configuracion", "promocion", "notificaciones", "albumes"] as const).map((m) => [m, "editar"])) },
+  { id: "director", nombre: "Director de sección", alcance: "todo", permisos: { inicio: "leer", personas: "leer", calendario: "editar", seguimiento: "leer", equipos: "editar", direccion: "leer", apostolados: "editar", formacion: "leer", retiros: "leer", economia: "leer", casa: "editar", camaras: "leer", documentos: "leer", promocion: "editar", notificaciones: "editar", albumes: "editar" } },
+  { id: "crecimiento", nombre: "Encargado de crecimiento", alcance: "todo", permisos: { inicio: "leer", personas: "editar", seguimiento: "editar", equipos: "editar", direccion: "leer", calendario: "leer", promocion: "editar", notificaciones: "editar", albumes: "leer" } },
+  { id: "responsable", nombre: "Responsable de equipo", alcance: "equipo", permisos: { equipos: "editar", calendario: "leer", retiros: "leer", albumes: "leer" } },
   { id: "director_de", nombre: "Director espiritual", alcance: "dirigidos", permisos: { direccion: "editar" } },
   { id: "economo", nombre: "Ecónomo de apostolado", alcance: "apostolado", permisos: { economia: "editar", apostolados: "leer", documentos: "editar" } },
   { id: "reservas", nombre: "Encargado de reservas y coworking", alcance: "todo", permisos: { casa: "editar", calendario: "leer" } },

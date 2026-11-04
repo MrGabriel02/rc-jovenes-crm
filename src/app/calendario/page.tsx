@@ -1,10 +1,11 @@
 import { Church } from "lucide-react";
 import { AvisoSimulado, Badge, Card, Grid, PageHeader, LinkButton } from "@/components/ui";
-import { db, apostolado } from "@/lib/data/repo";
+import { db, apostolado, formadores, nombreCompleto } from "@/lib/data/repo";
 import { HOY, diasEntre, fechaLarga, iso } from "@/lib/domain/fechas";
 import { TONO_LITURGICO, diaLiturgico, proximaCelebracion } from "@/lib/domain/liturgia";
 import { cultosDelDia } from "@/lib/domain/culto";
 import { CalendarioMes, type EventoCal } from "./mes";
+import { NuevaActividad } from "./nueva";
 
 export const metadata = { title: "Calendario" };
 
@@ -45,7 +46,7 @@ export default function Calendario() {
       <PageHeader
         title="Calendario"
         description="Actividades de la sección y de los apostolados, reservas de la casa, misas y fiestas litúrgicas."
-        actions={<><LinkButton href="#" variant="secondary">Ver calendarios enlazados</LinkButton><LinkButton href="#">Añadir actividad</LinkButton></>}
+        actions={<><LinkButton href="#" variant="secondary">Ver calendarios enlazados</LinkButton><LinkButton href="#nueva">Añadir actividad</LinkButton></>}
       />
       <AvisoSimulado />
       <Grid min={300}>
@@ -80,6 +81,15 @@ export default function Calendario() {
             );
           })}
         </ul>
+      </Card>
+      <Card id="nueva" title="Añadir actividad" subtitle="Queda en el calendario de la sección y, si es en la capilla, se revisa que no choque con la misa o la adoración">
+        <NuevaActividad
+          tipos={Object.entries(TIPO).map(([id, nombre]) => ({ id, nombre }))}
+          apostolados={db.apostolados.map((a) => ({ id: a.id, nombre: a.nombre }))}
+          espacios={db.espacios.map((e) => ({ id: e.id, nombre: e.nombre }))}
+          personas={formadores().map((f) => ({ id: f.persona.id, nombre: nombreCompleto(f.persona) }))}
+          directores={db.apostolados.flatMap((a) => { const p = db.personas.find((x) => x.id === a.directorId); return p ? [{ id: p.id, nombre: `${nombreCompleto(p)} (${a.nombre})` }] : []; })}
+        />
       </Card>
     </>
   );

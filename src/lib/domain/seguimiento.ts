@@ -65,3 +65,28 @@ export function enlaceWhatsApp(telefono: string, texto: string) {
   const num = telefono.replace(/\D/g, "").replace(/^0/, "58");
   return `https://wa.me/${num}?text=${encodeURIComponent(texto)}`;
 }
+
+/** Tasas de un retiro: cuántos respondieron, cuántos dijeron que no y cómo va cada paso. */
+export function tasasSeguimiento(segs: SeguimientoPersona[], finRetiro: string, hoy: Date) {
+  const total = segs.length;
+  const transcurridos = diasEntre(finRetiro, hoy);
+  const respondieron = segs.filter((s) => Object.values(s.pasos).includes("respondio"));
+  const rechazaron = respondieron.filter((s) => !s.aceptoDE && !s.aceptoEquipo);
+  const pasos = PASOS_POST_RETIRO.map((p) => {
+    const est = segs.map((s) => s.pasos[p.clave] ?? "pendiente");
+    const enviados = est.filter((e) => e === "enviado" || e === "respondio").length;
+    const omitidos = est.filter((e) => e === "omitido").length;
+    return {
+      clave: p.clave, titulo: p.titulo, dia: p.dia, llego: p.dia <= transcurridos,
+      enviados, respondieron: est.filter((e) => e === "respondio").length,
+      faltan: p.dia <= transcurridos ? total - enviados - omitidos : 0,
+    };
+  });
+  const pct = (n: number) => (total ? Math.round((n / total) * 100) : 0);
+  return {
+    total, respondieron: respondieron.length, rechazaron: rechazaron.length,
+    tasaRespuesta: pct(respondieron.length), tasaRechazo: pct(rechazaron.length),
+    aceptaronDE: segs.filter((s) => s.aceptoDE).length, aceptaronEquipo: segs.filter((s) => s.aceptoEquipo).length,
+    pasos,
+  };
+}
