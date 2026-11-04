@@ -155,3 +155,24 @@ export function AvisoSimulado() {
 export function Grid({ children, min = 320 }: { children: ReactNode; min?: number }) {
   return <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(auto-fit, minmax(min(${min}px, 100%), 1fr))` }}>{children}</div>;
 }
+
+/** Lista de barras horizontales para respuestas de una sola pregunta (cantidad y porcentaje). */
+export function BarrasLista({ datos, total }: { datos: { etiqueta: string; n: number }[]; total?: number }) {
+  const t = total ?? datos.reduce((a, d) => a + d.n, 0);
+  const max = Math.max(1, ...datos.map((d) => d.n));
+  return (
+    <ul className="flex flex-col gap-2.5">
+      {datos.map((d) => (
+        <li key={d.etiqueta} className="flex flex-col gap-1">
+          <span className="flex items-baseline justify-between gap-2 text-sm">
+            <span className="text-ink-2">{d.etiqueta}</span>
+            <span className="tabular-nums"><strong>{d.n}</strong> <span className="text-xs text-muted">{t ? Math.round((d.n / t) * 100) : 0} %</span></span>
+          </span>
+          <span className="h-2 overflow-hidden rounded-full bg-surface-2" aria-hidden>
+            <span className="block h-full rounded-full bg-[var(--series-1)]" style={{ width: `${(d.n / max) * 100}%` }} />
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}

@@ -3,21 +3,28 @@
 import { useState } from "react";
 import { Badge, Button, Card } from "@/components/ui";
 import { nivelAlertaFaltas } from "@/lib/domain/asistencia";
+import { TIPOS_EVENTO, type TipoEvento } from "@/lib/domain/equipos";
 
 interface Miembro { id: string; nombre: string; faltas: number; tieneDE: boolean; tieneApostolado: boolean; historial: boolean[] }
 
 export function PasarAsistencia({ miembros, fechas }: { miembros: Miembro[]; fechas: string[] }) {
   const [presentes, setPresentes] = useState<Record<string, boolean>>({});
   const [guardado, setGuardado] = useState(false);
-  const [tipo, setTipo] = useState<"programado" | "espontaneo">("programado");
+  const [tipo, setTipo] = useState<TipoEvento>("Encuentro");
+  const [fecha, setFecha] = useState("2026-11-01");
   const n = Object.values(presentes).filter(Boolean).length;
 
   return (
-    <Card title="Encuentro de hoy" subtitle="Toca a cada integrante para marcarlo presente" action={<Badge tone="accent">{n} de {miembros.length}</Badge>}>
-      <div role="group" aria-label="Tipo de encuentro" className="flex gap-1 self-start rounded-xl bg-surface-2 p-1">
-        {(["programado", "espontaneo"] as const).map((t) => (
-          <button key={t} type="button" aria-pressed={tipo === t} onClick={() => setTipo(t)} className={`min-h-9 rounded-lg px-3 text-sm font-semibold ${tipo === t ? "bg-surface shadow-sm" : "text-muted"}`}>{t === "programado" ? "Programado" : "Espontáneo"}</button>
-        ))}
+    <Card title="Crear evento y pasar asistencia" subtitle="Toca a cada integrante para marcarlo presente. Solo los encuentros cuentan para las faltas." action={<Badge tone="accent">{n} de {miembros.length}</Badge>}>
+      <div className="flex flex-wrap items-end gap-2">
+        <label className="flex flex-col gap-1 text-xs font-semibold text-muted">Tipo de evento
+          <select value={tipo} onChange={(e) => setTipo(e.target.value as TipoEvento)} className="min-h-11 rounded-xl border border-border bg-surface px-3 text-sm text-ink">
+            {TIPOS_EVENTO.map((t) => <option key={t}>{t}</option>)}
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-xs font-semibold text-muted">Fecha
+          <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} className="min-h-11 rounded-xl border border-border bg-surface px-3 text-sm text-ink" />
+        </label>
       </div>
       <ul className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(min(260px, 100%), 1fr))" }}>
         {miembros.map((m) => {
@@ -45,7 +52,7 @@ export function PasarAsistencia({ miembros, fechas }: { miembros: Miembro[]; fec
         })}
       </ul>
       <div className="flex flex-wrap items-center gap-3">
-        <Button onClick={() => setGuardado(true)}>Guardar asistencia</Button>
+        <Button onClick={() => setGuardado(true)}>Guardar {tipo.toLowerCase()}</Button>
         {guardado ? <span className="text-sm text-good-ink" role="status">Guardado (demo: no se envía a ningún servidor).</span> : null}
       </div>
       <details className="text-sm">

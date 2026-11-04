@@ -1,6 +1,7 @@
 // Capa de datos. Hoy lee la semilla simulada en memoria; la interfaz está pensada para
 // reemplazarse por Firestore (colecciones con los mismos nombres) sin tocar las pantallas.
 import * as s from "./semilla";
+import { ICAFE_IDS } from "./crm";
 import { HOY, diasEntre, diasParaCumpleanos, edad, mesesEntre } from "../domain/fechas";
 import { faltasSeguidas, nivelAlertaFaltas, porcentajeAsistencia } from "../domain/asistencia";
 import { cobertura, nivelAlertaDE, porConfirmar, realizadas, ultimaDE } from "../domain/direccion";
@@ -181,7 +182,7 @@ export function kpisInicio() {
   };
 }
 
-/** Formadores: responsables de equipo, directores y ecónomos de apostolado. */
+/** Formadores: miembros de ICAFE, responsables de equipo, directores y ecónomos de apostolado. */
 export function formadores() {
   const cargos = new Map<string, string>();
   for (const e of s.equipos) cargos.set(e.responsableId, `Responsable del equipo ${e.nombre}`);
@@ -189,6 +190,7 @@ export function formadores() {
     if (a.directorId && !cargos.has(a.directorId)) cargos.set(a.directorId, `Director de ${a.nombre}`);
     if (a.economoId && !cargos.has(a.economoId)) cargos.set(a.economoId, `Ecónomo de ${a.nombre}`);
   }
+  for (const id of ICAFE_IDS) if (!cargos.has(id)) cargos.set(id, "Miembro de ICAFE");
   return [...cargos].map(([id, cargo]) => ({ persona: persona(id), cargo }));
 }
 

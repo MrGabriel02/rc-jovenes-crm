@@ -8,7 +8,7 @@ import type { Modulo, Rol } from "@/lib/domain/types";
 const CLAVE: Record<string, Modulo> = {
   "/": "inicio", "/personas": "personas", "/calendario": "calendario", "/seguimiento": "seguimiento", "/equipos": "equipos",
   "/direccion-espiritual": "direccion", "/apostolados": "apostolados", "/formacion": "formacion", "/retiros": "retiros",
-  "/economia": "economia", "/casa": "casa", "/camaras": "camaras", "/comunicaciones": "comunicaciones", "/documentos": "documentos", "/configuracion": "configuracion",
+  "/economia": "economia", "/casa": "casa", "/camaras": "camaras", "/comunicaciones": "comunicaciones", "/documentos": "documentos", "/configuracion": "configuracion", "/promocion": "promocion", "/notificaciones": "notificaciones", "/albumes": "albumes",
 };
 const SIG = { undefined: "leer", leer: "editar", editar: undefined } as const;
 const ALCANCE = { todo: "Todo", apostolado: "Su apostolado", equipo: "Su equipo", dirigidos: "Sus dirigidos" };
