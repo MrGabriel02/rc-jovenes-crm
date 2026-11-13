@@ -21,15 +21,15 @@ export const NOTIF_ENVIADAS: Notificacion[] = [
 export interface Album { id: string; titulo: string; apostolado: string; actividad: string; fecha: string; servicio: "Google Drive" | "Google Fotos"; fotos: number; compartidoCon: boolean; url: string }
 
 export const ALBUMES: Album[] = [
-  { id: "a1", titulo: "Search XXV", apostolado: "Search", actividad: "Retiro", fecha: "2026-10-30", servicio: "Google Fotos", fotos: 412, compartidoCon: true, url: "#" },
-  { id: "a2", titulo: "God's Plan Retreat 23", apostolado: "God's Plan Retreat", actividad: "Retiro", fecha: "2026-10-25", servicio: "Google Drive", fotos: 287, compartidoCon: true, url: "#" },
-  { id: "a3", titulo: "Todos Uno, peregrinación 5", apostolado: "Todos Uno", actividad: "Peregrinación", fecha: "2026-09-13", servicio: "Google Fotos", fotos: 530, compartidoCon: true, url: "#" },
-  { id: "a4", titulo: "Mega Misiones 2026", apostolado: "Juventud y Familia Misionera", actividad: "Misiones", fecha: "2026-04-05", servicio: "Google Drive", fotos: 1204, compartidoCon: false, url: "#" },
-  { id: "a5", titulo: "Triduo de renovación 2026", apostolado: "General", actividad: "Retiro de la sección", fecha: "2026-07-05", servicio: "Google Fotos", fotos: 198, compartidoCon: true, url: "#" },
-  { id: "a6", titulo: "Ejercicios Espirituales 2026", apostolado: "General", actividad: "Retiro de la sección", fecha: "2026-02-15", servicio: "Google Drive", fotos: 96, compartidoCon: false, url: "#" },
-  { id: "a7", titulo: "Visita al ancianato", apostolado: "Soñar Despierto", actividad: "Programa VV", fecha: "2026-10-17", servicio: "Google Fotos", fotos: 64, compartidoCon: true, url: "#" },
-  { id: "a8", titulo: "Rally Solidaridad 2025", apostolado: "Solidaridad", actividad: "Rally", fecha: "2025-11-30", servicio: "Google Drive", fotos: 340, compartidoCon: true, url: "#" },
-  { id: "a9", titulo: "Hora eucarística de octubre", apostolado: "General", actividad: "Hora eucarística", fecha: "2026-10-01", servicio: "Google Fotos", fotos: 37, compartidoCon: true, url: "#" },
+  { id: "a1", titulo: "Search XXV", apostolado: "Search", actividad: "Retiro", fecha: "2026-10-30", servicio: "Google Fotos", fotos: 412, compartidoCon: true, url: "https://photos.google.com/" },
+  { id: "a2", titulo: "God's Plan Retreat 23", apostolado: "God's Plan Retreat", actividad: "Retiro", fecha: "2026-10-25", servicio: "Google Drive", fotos: 287, compartidoCon: true, url: "https://drive.google.com/drive/folders/1rbCxHNNKvcpGCvNWOkH9vmFyZYpQFt_8" },
+  { id: "a3", titulo: "Todos Uno, peregrinación 5", apostolado: "Todos Uno", actividad: "Peregrinación", fecha: "2026-09-13", servicio: "Google Fotos", fotos: 530, compartidoCon: true, url: "https://photos.google.com/" },
+  { id: "a4", titulo: "Mega Misiones 2026", apostolado: "Juventud y Familia Misionera", actividad: "Misiones", fecha: "2026-04-05", servicio: "Google Drive", fotos: 1204, compartidoCon: false, url: "https://drive.google.com/drive/folders/1rbCxHNNKvcpGCvNWOkH9vmFyZYpQFt_8" },
+  { id: "a5", titulo: "Triduo de renovación 2026", apostolado: "General", actividad: "Retiro de la sección", fecha: "2026-07-05", servicio: "Google Fotos", fotos: 198, compartidoCon: true, url: "https://photos.google.com/" },
+  { id: "a6", titulo: "Ejercicios Espirituales 2026", apostolado: "General", actividad: "Retiro de la sección", fecha: "2026-02-15", servicio: "Google Drive", fotos: 96, compartidoCon: false, url: "https://drive.google.com/drive/folders/1rbCxHNNKvcpGCvNWOkH9vmFyZYpQFt_8" },
+  { id: "a7", titulo: "Visita al ancianato", apostolado: "Soñar Despierto", actividad: "Programa VV", fecha: "2026-10-17", servicio: "Google Fotos", fotos: 64, compartidoCon: true, url: "https://photos.google.com/" },
+  { id: "a8", titulo: "Rally Solidaridad 2025", apostolado: "Solidaridad", actividad: "Rally", fecha: "2025-11-30", servicio: "Google Drive", fotos: 340, compartidoCon: true, url: "https://drive.google.com/drive/folders/1rbCxHNNKvcpGCvNWOkH9vmFyZYpQFt_8" },
+  { id: "a9", titulo: "Hora eucarística de octubre", apostolado: "General", actividad: "Hora eucarística", fecha: "2026-10-01", servicio: "Google Fotos", fotos: 37, compartidoCon: true, url: "https://photos.google.com/" },
 ];
 
 export const CUENTA_ALBUMES = "rcjovenesbqto@gmail.com";

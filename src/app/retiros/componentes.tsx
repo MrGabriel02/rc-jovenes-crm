@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Check, FileText, Link2, Plus, RefreshCw, Store, UserPlus, X } from "lucide-react";
+import { Check, FileSpreadsheet, FileText, Link2, Plus, RefreshCw, Store, Trash2, UserPlus, X } from "lucide-react";
 import { Badge, Button } from "@/components/ui";
 import { BotonesExportar, descargarDoc } from "@/components/exportar";
-import { NOMBRE_PASO, PASOS_INVITACION, type Invitado, type Pago, type PasoInvitacion, type Tarea } from "@/lib/data/retiros";
+import { PASOS_INVITACION, type Invitado, type Pago, type PasoInvitacion, type Tarea } from "@/lib/data/retiros";
 
 const campo = "min-h-11 rounded-xl border border-border bg-surface px-3 text-sm";
 const fecha = (iso: string, opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "short" }) => new Date(iso.length === 10 ? `${iso}T12:00:00` : iso).toLocaleDateString("es-VE", opts);
@@ -12,7 +12,7 @@ const sumarDias = (iso: string, d: number) => { const x = new Date(`${iso}T12:00
 const usd = (n: number) => `$${n.toLocaleString("es-VE", { maximumFractionDigits: 2 })}`;
 
 export function SyncFormulario({ formulario, cambios }: { formulario: { nombre: string; url: string; ultimaSync: string } | null; cambios: { fecha: string; texto: string }[] }) {
-  const [url, setUrl] = useState(formulario?.url === "#" ? "" : formulario?.url ?? "");
+  const [url, setUrl] = useState(formulario?.url ?? "");
   const [sync, setSync] = useState(formulario?.ultimaSync ?? null);
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
@@ -39,73 +39,146 @@ export function SyncFormulario({ formulario, cambios }: { formulario: { nombre: 
 }
 
 const TONO_PASO: Record<PasoInvitacion, string> = { invitacion: "var(--series-2)", agenda: "var(--series-3)", de: "var(--gold)", acepta: "var(--series-1)", inscripcion: "var(--good-ink)" };
+/** Encabezados iguales a los de la hoja "Asociaciones" del Excel. */
+const COLUMNA: Record<PasoInvitacion, string> = { invitacion: "Invitación", agenda: "Agenda", de: "Dirección espiritual", acepta: "Acepta", inscripcion: "Inscripción" };
+const SIN_PASOS = { invitacion: false, agenda: false, de: false, acepta: false, inscripcion: false };
 
-export function SeguimientoInvitados({ inicial, equipos }: { inicial: Invitado[]; equipos: string[] }) {
-  const [lista, setLista] = useState(inicial);
+/**
+ * Tabla de seguimiento de quienes se van a asociar (hoja "Asociaciones" del Excel del Triduo):
+ * se agregan jóvenes y se marca cada paso. La fila se colorea con el último paso logrado.
+ */
+export function SeguimientoAsociados({ lista, setLista, equipos, sugerencias }: { lista: Invitado[]; setLista: (f: (l: Invitado[]) => Invitado[]) => void; equipos: string[]; sugerencias: { nombre: string; equipo?: string }[] }) {
   const [nuevo, setNuevo] = useState(false);
   const [filtro, setFiltro] = useState("Todos");
-  const visibles = lista.filter((i) => filtro === "Todos" || i.equipo === filtro);
+  const [falta, setFalta] = useState<PasoInvitacion | "">("");
+  const [q, setQ] = useState("");
+  const [nombreNuevo, setNombreNuevo] = useState("");
+  const [equipoNuevo, setEquipoNuevo] = useState(equipos[0] ?? "Sin equipo");
+  const listaEquipos = [...new Set([...equipos, ...lista.map((i) => i.equipo)])];
+  const visibles = lista.filter((i) => (filtro === "Todos" || i.equipo === filtro) && (!falta || (!i.pasos[falta] && !i.no)) && (!q || i.nombre.toLowerCase().includes(q.toLowerCase())));
   const cuenta = (k: PasoInvitacion) => lista.filter((i) => i.pasos[k]).length;
   const alternar = (id: string, k: PasoInvitacion) => setLista((l) => l.map((i) => (i.id === id ? { ...i, pasos: { ...i.pasos, [k]: !i.pasos[k] } } : i)));
+  const siguiente = (i: Invitado) => (i.no ? null : PASOS_INVITACION.find((k) => !i.pasos[k]) ?? null);
+
+  const exportar = () => {
+    const vf = (b: boolean) => (b ? "VERDADERO" : "FALSO");
+    const filas = [["Nro", "Equipo", "Joven", ...PASOS_INVITACION.map((k) => COLUMNA[k]), "No"], ...lista.map((i, n) => [n + 1, i.equipo, i.nombre, ...PASOS_INVITACION.map((k) => vf(i.pasos[k])), vf(i.no)]), ["", "", "Total", ...PASOS_INVITACION.map((k) => cuenta(k)), lista.filter((i) => i.no).length]];
+    const csv = "\ufeff" + filas.map((f) => f.map((x) => `"${String(x).replace(/"/g, '""')}"`).join(";")).join("\n");
+    const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+    const a = document.createElement("a");
+    a.href = url; a.download = "Asociaciones.csv"; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  };
 
   return (
     <div className="flex flex-col gap-3">
-      <ol className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(130px, 100%), 1fr))" }}>
-        <li className="rounded-xl bg-surface-2 p-3"><span className="text-xs font-semibold text-muted">Invitados</span><strong className="block text-2xl tabular-nums">{lista.length}</strong></li>
+      <ol className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(120px, 100%), 1fr))" }}>
+        <li className="rounded-xl bg-surface-2 p-3"><span className="text-xs font-semibold text-muted">En la lista</span><strong className="block text-2xl tabular-nums">{lista.length}</strong></li>
         {PASOS_INVITACION.map((k) => (
           <li key={k} className="rounded-xl bg-surface-2 p-3" style={{ boxShadow: `inset 4px 0 0 ${TONO_PASO[k]}` }}>
-            <span className="text-xs font-semibold text-muted">{NOMBRE_PASO[k]}</span>
+            <span className="text-xs font-semibold text-muted">{COLUMNA[k]}</span>
             <strong className="block text-2xl tabular-nums">{cuenta(k)} <span className="text-sm font-semibold text-muted">{lista.length ? Math.round((cuenta(k) / lista.length) * 100) : 0}%</span></strong>
           </li>
         ))}
         <li className="rounded-xl bg-surface-2 p-3"><span className="text-xs font-semibold text-muted">Dijeron que no</span><strong className="block text-2xl tabular-nums">{lista.filter((i) => i.no).length}</strong></li>
       </ol>
       <div className="flex flex-wrap items-end gap-2">
-        <label className="flex flex-col gap-1 text-xs font-semibold text-muted">Equipo<select value={filtro} onChange={(e) => setFiltro(e.target.value)} className={`${campo} text-ink`}><option>Todos</option>{equipos.map((e) => <option key={e}>{e}</option>)}</select></label>
-        <span className="ml-auto"><Button onClick={() => setNuevo((v) => !v)}><UserPlus size={16} aria-hidden />Añadir invitado</Button></span>
+        <label className="flex min-w-40 flex-1 flex-col gap-1 text-xs font-semibold text-muted">Buscar<input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Nombre del joven" className={`${campo} text-ink`} /></label>
+        <label className="flex flex-col gap-1 text-xs font-semibold text-muted">Equipo<select value={filtro} onChange={(e) => setFiltro(e.target.value)} className={`${campo} text-ink`}><option>Todos</option>{listaEquipos.map((e) => <option key={e}>{e}</option>)}</select></label>
+        <label className="flex flex-col gap-1 text-xs font-semibold text-muted">Les falta<select value={falta} onChange={(e) => setFalta(e.target.value as PasoInvitacion | "")} className={`${campo} text-ink`}><option value="">Cualquier paso</option>{PASOS_INVITACION.map((k) => <option key={k} value={k}>{COLUMNA[k]}</option>)}</select></label>
+        <span className="flex flex-wrap gap-2">
+          <Button onClick={() => setNuevo((v) => !v)}><UserPlus size={16} aria-hidden />Agregar joven</Button>
+          <Button variant="secondary" onClick={exportar}><FileSpreadsheet size={16} aria-hidden />Exportar a Excel</Button>
+        </span>
       </div>
       {nuevo ? (
-        <form className="flex flex-wrap items-end gap-2 rounded-xl bg-surface-2 p-3" onSubmit={(e) => { e.preventDefault(); const f = new FormData(e.currentTarget); setLista((l) => [{ id: `n${l.length}`, personaId: "", nombre: String(f.get("nombre")), equipo: String(f.get("equipo")), pasos: { invitacion: false, agenda: false, de: false, acepta: false, inscripcion: false }, no: false }, ...l]); setNuevo(false); }}>
-          <label className="flex flex-1 flex-col gap-1 text-xs font-semibold">Nombre<input name="nombre" required className={campo} /></label>
-          <label className="flex flex-col gap-1 text-xs font-semibold">Equipo<select name="equipo" className={campo}>{equipos.map((e) => <option key={e}>{e}</option>)}<option>Sin equipo</option></select></label>
-          <Button type="submit">Añadir</Button>
+        <form className="flex flex-wrap items-end gap-2 rounded-xl bg-surface-2 p-3" onSubmit={(e) => {
+          e.preventDefault();
+          const nombre = nombreNuevo.trim();
+          if (!nombre) return;
+          setLista((l) => [...l, { id: `n${Date.now().toString(36)}`, personaId: "", nombre, equipo: equipoNuevo.trim() || "Sin equipo", pasos: { ...SIN_PASOS, invitacion: true }, no: false }]);
+          setNombreNuevo("");
+        }}>
+          <label className="flex min-w-48 flex-1 flex-col gap-1 text-xs font-semibold">Joven (de la base o nuevo)
+            <input list="base-jovenes" value={nombreNuevo} required autoFocus onChange={(e) => { setNombreNuevo(e.target.value); const s = sugerencias.find((x) => x.nombre === e.target.value); if (s?.equipo) setEquipoNuevo(s.equipo); }} className={campo} />
+            <datalist id="base-jovenes">{sugerencias.map((x) => <option key={x.nombre} value={x.nombre} />)}</datalist>
+          </label>
+          <label className="flex flex-col gap-1 text-xs font-semibold">Equipo
+            <input list="equipos-asoc" value={equipoNuevo} onChange={(e) => setEquipoNuevo(e.target.value)} className={campo} />
+            <datalist id="equipos-asoc">{listaEquipos.map((x) => <option key={x} value={x} />)}<option value="Sin equipo" /></datalist>
+          </label>
+          <Button type="submit"><Plus size={16} aria-hidden />Agregar</Button>
+          <Button type="button" variant="secondary" onClick={() => setNuevo(false)}>Listo</Button>
+          <p className="basis-full text-xs text-muted">Entra con la invitación marcada. Puedes seguir agregando sin cerrar.</p>
         </form>
       ) : null}
-      <div className="overflow-x-auto">
-        <table className="w-full min-w-[780px] text-sm">
-          <thead><tr className="text-left text-muted"><th className="px-2 py-2 font-semibold">Joven</th><th className="px-2 py-2 font-semibold">Equipo</th>{PASOS_INVITACION.map((k) => <th key={k} className="px-1 py-2 text-center text-xs font-semibold">{NOMBRE_PASO[k]}</th>)}<th className="px-1 py-2 text-center text-xs font-semibold">No</th></tr></thead>
+      <div className="relative overflow-x-auto rounded-xl border border-border">
+        <table className="w-full min-w-[860px] text-sm">
+          <thead className="bg-surface-2">
+            <tr className="text-left text-muted">
+              <th className="px-2 py-2 text-xs font-semibold">Nro</th>
+              <th className="sticky left-0 z-10 bg-surface-2 px-2 py-2 font-semibold">Joven</th>
+              <th className="px-2 py-2 font-semibold">Equipo</th>
+              {PASOS_INVITACION.map((k) => <th key={k} className="px-1 py-2 text-center text-xs font-semibold">{COLUMNA[k]}</th>)}
+              <th className="px-1 py-2 text-center text-xs font-semibold">No</th>
+              <th className="px-2 py-2 text-xs font-semibold">Siguiente paso</th>
+              <th className="px-1 py-2"><span className="sr-only">Quitar</span></th>
+            </tr>
+          </thead>
           <tbody>
             {visibles.map((i) => {
               const ultimo = [...PASOS_INVITACION].reverse().find((k) => i.pasos[k]);
+              const sig = siguiente(i);
+              const n = lista.indexOf(i) + 1;
               return (
-                <tr key={i.id} className="border-t border-border" style={ultimo && !i.no ? { boxShadow: `inset 4px 0 0 ${TONO_PASO[ultimo]}` } : undefined}>
-                  <td className="px-2 py-1.5 font-semibold">{i.nombre}</td>
+                <tr key={i.id} className={`border-t border-border ${i.no ? "text-muted" : ""}`} style={ultimo && !i.no ? { boxShadow: `inset 4px 0 0 ${TONO_PASO[ultimo]}` } : undefined}>
+                  <td className="px-2 py-1.5 text-xs tabular-nums text-muted">{n}</td>
+                  <td className={`sticky left-0 z-10 bg-surface px-2 py-1.5 font-semibold ${i.no ? "line-through" : ""}`}>{i.nombre}</td>
                   <td className="px-2 py-1.5 text-muted">{i.equipo}</td>
                   {PASOS_INVITACION.map((k) => (
                     <td key={k} className="px-1 py-1.5 text-center">
-                      <button type="button" aria-pressed={i.pasos[k]} aria-label={`${NOMBRE_PASO[k]}: ${i.nombre}`} onClick={() => alternar(i.id, k)} className="inline-flex size-8 items-center justify-center rounded-lg border border-border" style={i.pasos[k] ? { background: TONO_PASO[k], borderColor: TONO_PASO[k], color: "white" } : undefined}>
-                        {i.pasos[k] ? <Check size={14} aria-hidden /> : null}
-                      </button>
+                      <label className="relative inline-flex size-9 cursor-pointer items-center justify-center rounded-lg border border-border has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand" style={i.pasos[k] ? { background: TONO_PASO[k], borderColor: TONO_PASO[k], color: "white" } : undefined}>
+                        <input type="checkbox" checked={i.pasos[k]} onChange={() => alternar(i.id, k)} aria-label={`${COLUMNA[k]}: ${i.nombre}`} className="sr-only" />
+                        {i.pasos[k] ? <Check size={15} aria-hidden /> : null}
+                      </label>
                     </td>
                   ))}
                   <td className="px-1 py-1.5 text-center">
-                    <button type="button" aria-pressed={i.no} aria-label={`Dijo que no: ${i.nombre}`} onClick={() => setLista((l) => l.map((x) => (x.id === i.id ? { ...x, no: !x.no } : x)))} className={`inline-flex size-8 items-center justify-center rounded-lg border ${i.no ? "border-warn-border bg-warn-bg text-warn-ink" : "border-border"}`}>{i.no ? <X size={14} aria-hidden /> : null}</button>
+                    <label className={`relative inline-flex size-9 cursor-pointer items-center justify-center rounded-lg border has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand ${i.no ? "border-warn-border bg-warn-bg text-warn-ink" : "border-border"}`}>
+                      <input type="checkbox" checked={i.no} onChange={() => setLista((l) => l.map((x) => (x.id === i.id ? { ...x, no: !x.no } : x)))} aria-label={`Dijo que no: ${i.nombre}`} className="sr-only" />
+                      {i.no ? <X size={15} aria-hidden /> : null}
+                    </label>
                   </td>
+                  <td className="px-2 py-1.5 text-xs">{i.no ? "No se asocia" : sig ? COLUMNA[sig] : <span className="font-semibold text-good-ink">Completo</span>}</td>
+                  <td className="px-1 py-1.5"><button type="button" aria-label={`Quitar a ${i.nombre} de la lista`} onClick={() => setLista((l) => l.filter((x) => x.id !== i.id))} className="rounded-lg p-2 text-muted hover:text-ink"><Trash2 size={14} /></button></td>
                 </tr>
               );
             })}
+            {!visibles.length ? <tr><td colSpan={11} className="px-2 py-4 text-center text-sm text-muted">Nadie con ese filtro.</td></tr> : null}
           </tbody>
+          <tfoot className="bg-surface-2 font-bold">
+            <tr className="border-t-2 border-border">
+              <td />
+              <td className="sticky left-0 z-10 bg-surface-2 px-2 py-2">Total</td>
+              <td />
+              {PASOS_INVITACION.map((k) => <td key={k} className="px-1 py-2 text-center tabular-nums">{cuenta(k)}</td>)}
+              <td className="px-1 py-2 text-center tabular-nums">{lista.filter((i) => i.no).length}</td>
+              <td colSpan={2} />
+            </tr>
+          </tfoot>
         </table>
       </div>
-      <p className="text-xs text-muted">Misma tabla que la hoja “Asociaciones” del Excel del Triduo: el color de la fila marca el último paso logrado.</p>
+      <p className="text-xs text-muted">Mismas columnas que la hoja “Asociaciones” del Excel del Triduo, con el total abajo. El color de la fila marca el último paso logrado; quienes aceptan y se inscriben pasan solos al acta.</p>
     </div>
   );
 }
 
 /** Acta de asociación: misma estructura del documento modelo, con los nombres de quienes se asocian. */
 export function ActaAsociacion({ nombres, anio, fechaRetiro }: { nombres: string[]; anio: number; fechaRetiro: string }) {
-  const [lista, setLista] = useState(nombres);
+  const [extras, setExtras] = useState<string[]>([]);
+  const [quitados, setQuitados] = useState<Set<string>>(new Set());
   const [nuevo, setNuevo] = useState("");
+  const lista = [...nombres, ...extras].filter((n) => !quitados.has(n));
   const texto = () => [
     `Acta de asociación al Regnum Christi · Triduo ${anio}`,
     `En Barquisimeto, el ${fecha(fechaRetiro, { day: "numeric", month: "long", year: "numeric" })}, al concluir el Triduo de renovación de la sección de jóvenes, las personas que se nombran a continuación manifiestan libremente su deseo de asociarse al Regnum Christi:`,
@@ -121,11 +194,11 @@ export function ActaAsociacion({ nombres, anio, fechaRetiro }: { nombres: string
         {lista.map((n, i) => (
           <li key={n + i} className="flex items-center justify-between gap-2 border-b border-border py-1 last:border-0">
             <span><span className="text-muted tabular-nums">{i + 1}.</span> {n}</span>
-            <button type="button" aria-label={`Quitar a ${n}`} onClick={() => setLista((l) => l.filter((_, j) => j !== i))} className="p-1 text-muted hover:text-ink"><X size={14} /></button>
+            <button type="button" aria-label={`Quitar a ${n}`} onClick={() => { setQuitados((q) => new Set(q).add(n)); setExtras((l) => l.filter((x) => x !== n)); }} className="p-1 text-muted hover:text-ink"><X size={14} /></button>
           </li>
         ))}
       </ol>
-      <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); if (nuevo.trim()) setLista((l) => [...l, nuevo.trim()]); setNuevo(""); }}>
+      <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); const v = nuevo.trim(); if (v) { setExtras((l) => [...l, v]); setQuitados((q) => { const c = new Set(q); c.delete(v); return c; }); } setNuevo(""); }}>
         <input value={nuevo} onChange={(e) => setNuevo(e.target.value)} placeholder="Añadir nombre" aria-label="Añadir nombre" className={`${campo} flex-1`} />
         <Button type="submit" variant="secondary"><Plus size={16} aria-hidden />Añadir</Button>
       </form>

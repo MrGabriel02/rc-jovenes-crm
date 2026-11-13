@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { ImagePlus, MessageCircle, Plus, Search, Send, UserPlus } from "lucide-react";
 import { Badge, Button } from "@/components/ui";
+import { BotonAccion } from "@/components/accion";
 import type { TipoLugar } from "@/lib/data/promocion";
 
 const campo = "min-h-11 rounded-xl border border-border bg-surface px-3 text-sm";
@@ -123,7 +124,7 @@ export function EnviarFlyer({ promociones }: { promociones: { id: string; nombre
           </li>
         ))}
       </ul>
-      <Button variant="secondary"><Send size={16} aria-hidden />Enviar a los {p.embajadores.length} embajadores</Button>
+      <BotonAccion key={p.id} variant="secondary" hecho={`En cola para ${p.embajadores.length} embajadores`}><Send size={16} aria-hidden />Enviar a los {p.embajadores.length} embajadores</BotonAccion>
       <p className="text-xs text-muted">Sin la API de WhatsApp, cada botón abre el chat con el mensaje listo y el flyer se adjunta a mano. Con la API, se envía todo de una vez.</p>
     </div>
   );

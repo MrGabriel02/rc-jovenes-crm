@@ -1,5 +1,5 @@
 /**
- * Requisitos del CRM que pidió el P. Elías (documento "CRM - RC.pdf"),
+ * Aspectos generales del CRM que pidió el P. Elías (documento "CRM - RC.pdf"),
  * con el estado de cada parte en la plataforma. Se muestra en el inicio
  * para supervisar el avance.
  */
@@ -28,8 +28,8 @@ export const REQUISITOS: Requisito[] = [
       { texto: "Pasos del día 0 al 15 con fecha de cada uno", estado: "listo" },
       { texto: "Aviso al encargado del CRM de lo que toca hoy", estado: "listo" },
       { texto: "Paso en el que va cada persona", estado: "listo" },
-      { texto: "Tasas de respuesta y archivo de retiros terminados", estado: "en_curso" },
-      { texto: "Notificaciones en el teléfono", estado: "pendiente" },
+      { texto: "Tasas de respuesta y archivo de retiros terminados", estado: "listo" },
+      { texto: "Notificaciones en el teléfono (falta activar el envío real con Firebase)", estado: "en_curso" },
     ],
   },
   {
@@ -38,7 +38,7 @@ export const REQUISITOS: Requisito[] = [
       { texto: "Asistencia fácil para el responsable", estado: "listo" },
       { texto: "Aviso a las 2 faltas seguidas (responsable)", estado: "listo" },
       { texto: "Aviso a las 4 faltas seguidas (crecimiento)", estado: "listo" },
-      { texto: "Registro de quién tiene DE y apostolado en el equipo", estado: "en_curso" },
+      { texto: "Registro de quién tiene DE y apostolado en el equipo", estado: "listo" },
       { texto: "Asistencia a triduo, EE, VFC y fin de semana (la marca el administrador)", estado: "pendiente" },
     ],
   },
@@ -47,7 +47,7 @@ export const REQUISITOS: Requisito[] = [
     partes: [
       { texto: "Integrantes, documentos y economía por apostolado", estado: "listo" },
       { texto: "Evaluación de responsables por enlace después de cada actividad", estado: "listo" },
-      { texto: "Propuesta de nuevos integrantes al director de sección", estado: "pendiente" },
+      { texto: "Propuesta de nuevos integrantes al director de sección", estado: "listo" },
     ],
   },
   {
@@ -56,7 +56,8 @@ export const REQUISITOS: Requisito[] = [
       { texto: "Registro de cada DE con su fecha (agenda de citas o a mano)", estado: "listo" },
       { texto: "Aviso al director a los 2 meses sin DE", estado: "listo" },
       { texto: "Aviso al encargado del CRM a los 3 meses sin DE", estado: "listo" },
-      { texto: "Lista de jóvenes por director y conexión con Google Calendar", estado: "pendiente" },
+      { texto: "Lista de jóvenes por director", estado: "listo" },
+      { texto: "Conexión con Google Calendar de cada director", estado: "en_curso" },
     ],
   },
   {
@@ -64,7 +65,7 @@ export const REQUISITOS: Requisito[] = [
     partes: [
       { texto: "Asistencia de cada formador a triduo o EE, VFC y fin de semana de formadores", estado: "listo" },
       { texto: "Alerta si un formador no fue a ninguna en el año", estado: "listo" },
-      { texto: "Notificación al encargado del CRM cuando un formador falta", estado: "pendiente" },
+      { texto: "Notificación al encargado del CRM cuando un formador falta", estado: "en_curso" },
     ],
   },
 ];

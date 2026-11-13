@@ -1,5 +1,6 @@
 import { FileSpreadsheet, RefreshCw, Send } from "lucide-react";
-import { AvisoSimulado, BarrasLista, Badge, Button, Card, Grid, Kpi, PageHeader, LinkButton } from "@/components/ui";
+import { BotonAccion } from "@/components/accion";
+import { AvisoSimulado, BarrasLista, Badge, Card, Grid, Kpi, PageHeader, LinkButton } from "@/components/ui";
 import { Columnas } from "@/components/charts";
 import { TablaPersonas, type FilaPersona } from "./tabla";
 import { db, formadores, historialPersona, personasConResumen } from "@/lib/data/repo";
@@ -44,7 +45,7 @@ export default function Personas() {
       <PageHeader
         title="Personas"
         description="Base general: una ficha por persona con todo lo que ha hecho, sea caminante, servidor, responsable o formador."
-        actions={<><LinkButton href="#formularios" variant="secondary"><FileSpreadsheet size={16} aria-hidden />Formularios sincronizados</LinkButton><LinkButton href="#"><RefreshCw size={16} aria-hidden />Sincronizar ahora</LinkButton></>}
+        actions={<><LinkButton href="#formularios" variant="secondary"><FileSpreadsheet size={16} aria-hidden />Formularios sincronizados</LinkButton><BotonAccion hecho="Formularios al día"><RefreshCw size={16} aria-hidden />Sincronizar ahora</BotonAccion></>}
       />
       <AvisoSimulado />
       <Grid min={180}>
@@ -93,7 +94,7 @@ export default function Personas() {
             <dt className="text-ink-2">Al día (último año)</dt><dd className="font-bold tabular-nums">{r.length - viejas}</dd>
           </dl>
           <p className="text-sm text-ink-2">Cada persona recibe un enlace personal que abre su ficha ya llena: solo corrige lo que cambió y confirma. Quien no responde recibe un recordatorio a los 7 días.</p>
-          <Button><Send size={16} aria-hidden />Enviar enlace de actualización a {viejas + sinResponder} personas</Button>
+          <BotonAccion hecho={`Enlace enviado a ${viejas + sinResponder} personas`}><Send size={16} aria-hidden />Enviar enlace de actualización a {viejas + sinResponder} personas</BotonAccion>
         </Card>
         <Card id="formularios" title="Formularios sincronizados" subtitle="Todas las respuestas se juntan en una hoja de Sheets: una pestaña general y una por apostolado">
           <details className="group rounded-xl border border-border">
@@ -107,7 +108,7 @@ export default function Personas() {
               ))}
             </ul>
           </details>
-          <LinkButton href="#" variant="secondary"><FileSpreadsheet size={16} aria-hidden />Abrir la base general en Sheets</LinkButton>
+          <LinkButton href="https://docs.google.com/spreadsheets/" external variant="secondary"><FileSpreadsheet size={16} aria-hidden />Abrir la base general en Sheets</LinkButton>
         </Card>
         <Card title="Datos faltantes" subtitle="Se piden solos la próxima vez que la persona se inscriba a algo">
           <BarrasLista total={filas.length} datos={CAMPOS.map(([k, l]) => ({ etiqueta: l, n: filas.filter((f) => f[k] === null || f[k] === "").length }))} />

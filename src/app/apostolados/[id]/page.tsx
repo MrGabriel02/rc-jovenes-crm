@@ -11,6 +11,7 @@ import { formulariosDe, historialDe, servidoresDe } from "@/lib/data/historial";
 import { HOY, diasEntre } from "@/lib/domain/fechas";
 import { EconomiaPorRetiro } from "./economia";
 import { Retencion } from "./retencion";
+import { ProponerIntegrante } from "./proponer";
 import { apostolado, db, economiaPorMes, nombreCompleto, persona } from "@/lib/data/repo";
 import { enlacesDe, integrantesDe, type TipoEnlace } from "@/lib/data/apostolados";
 import { DOCUMENTOS } from "@/lib/data/documentos";
@@ -137,9 +138,10 @@ export default async function Apostolado({ params }: PageProps<"/apostolados/[id
 
   const integrantesTab = (
     <>
-      <Card title="Integrantes activos" subtitle="Quienes sirven hoy en el apostolado" action={<LinkButton href="#" variant="secondary">Proponer integrante</LinkButton>}>
+      <Card title="Integrantes activos" subtitle="Quienes sirven hoy en el apostolado" action={<LinkButton href="#proponer" variant="secondary">Proponer integrante</LinkButton>}>
         {tablaIntegrantes(activos, false)}
       </Card>
+      <ProponerIntegrante apostolado={a.nombre} personas={db.personas.filter((p) => !activos.some((x) => x.personaId === p.id)).slice(0, 150).map(nombreCompleto)} roles={[...new Set(["Servidor", "Coordinador", "Ecónomo", ...activos.map((x) => x.cargo)])]} />
       <Card title="Servidores por retiro" subtitle="Quiénes han servido y en cuántos retiros">
         <Table head={["Servidor", "Rol más frecuente", "Retiros servidos", "Último"]} minWidth={560}>
           {servidores.map((x) => (
@@ -204,11 +206,11 @@ export default async function Apostolado({ params }: PageProps<"/apostolados/[id
       {enlaces.map((e) => {
         const Icon = ICONO[e.tipo];
         return (
-          <a key={e.titulo} href={e.url} className="flex min-h-16 items-center gap-3 rounded-2xl border border-border bg-surface p-4 text-ink no-underline transition-colors hover:border-brand">
+          <a key={e.titulo} href={e.url} {...(e.url.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})} className="flex min-h-16 items-center gap-3 rounded-2xl border border-border bg-surface p-4 text-ink no-underline transition-colors hover:border-brand">
             <span aria-hidden className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-accent-soft text-accent"><Icon size={20} /></span>
             <span className="flex flex-col">
               <strong className="text-sm">{e.titulo}</strong>
-              <span className="text-xs text-muted">{e.fecha ? fechaCorta(e.fecha) : "Enlace por configurar"}</span>
+              <span className="text-xs text-muted">{e.fecha ? fechaCorta(e.fecha) : e.url.startsWith("http") ? "Abre el servicio · por conectar la cuenta" : "En documentos"}</span>
             </span>
           </a>
         );

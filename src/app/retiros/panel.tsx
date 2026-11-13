@@ -5,7 +5,7 @@ import { Badge, Card, Grid, Kpi } from "@/components/ui";
 import { Columnas } from "@/components/charts";
 import type { Comida } from "@/lib/domain/menu";
 import { NOMBRE_RETIRO, type EdicionRetiro, type Invitado, type Pago, type Tarea, type TipoRetiro } from "@/lib/data/retiros";
-import { ActaAsociacion, GeneradorFormulario, PagosRetiro, Proveedores, SeguimientoInvitados, SyncFormulario, Tareas } from "./componentes";
+import { ActaAsociacion, GeneradorFormulario, PagosRetiro, Proveedores, SeguimientoAsociados, SyncFormulario, Tareas } from "./componentes";
 import { MenuYCompras } from "./menu";
 
 export interface DatosRetiros {
@@ -16,6 +16,7 @@ export interface DatosRetiros {
   proveedores: { id: string; nombre: string; tipo: string; direccion: string; contacto: string; telefono: string }[];
   invitados: Invitado[];
   equiposInvitados: string[];
+  sugerencias: { nombre: string; equipo?: string }[];
   pagos: Pago[];
   gastos: { id: string; descripcion: string; montoUSD: number; tipo: string; fecha: string }[];
   tasa: number;
@@ -39,7 +40,8 @@ export function PanelRetiros({ d }: { d: DatosRetiros }) {
   const anterior = deTipo[deTipo.indexOf(e) - 1];
   const titulo = `${NOMBRE_RETIRO[tipo]} ${e.anio}`;
   const faltan = d.formadoresFaltan[e.id] ?? [];
-  const aceptan = d.invitados.filter((i) => i.pasos.acepta && i.pasos.inscripcion && !i.no).map((i) => i.nombre);
+  const [invitados, setInvitados] = useState(d.invitados);
+  const aceptan = invitados.filter((i) => i.pasos.acepta && i.pasos.inscripcion && !i.no).map((i) => i.nombre);
 
   return (
     <>
@@ -87,8 +89,8 @@ export function PanelRetiros({ d }: { d: DatosRetiros }) {
             <Kpi label="Ganancia" value={usd(ganancia)} tone={ganancia >= 0 ? "good" : "warn"} note={`10 % a la localidad: ${usd(Math.max(0, ganancia) * 0.1)}`} />
           </Grid>
           {tipo === "triduo" ? (
-            <Card title="Seguimiento de invitados" subtitle="Invitación, respuesta, dirección espiritual, si acepta y si se inscribe">
-              <SeguimientoInvitados inicial={d.invitados} equipos={d.equiposInvitados} />
+            <Card id="asociados" title={`Seguimiento de asociados · Triduo ${e.anio}`} subtitle="Agrega a los jóvenes que se van a asociar y marca cada paso: invitación, agenda, dirección espiritual, si acepta y si se inscribe">
+              <SeguimientoAsociados lista={invitados} setLista={setInvitados} equipos={d.equiposInvitados} sugerencias={d.sugerencias} />
             </Card>
           ) : null}
           <Grid min={320}>

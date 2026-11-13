@@ -9,12 +9,19 @@ import type { Espacio, Reserva } from "@/lib/domain/types";
 import type * as CasaData from "@/lib/data/casa";
 import type { Camara } from "@/lib/data/camaras";
 import { MapaCasa } from "./mapa";
+import { FlujoCoworking } from "./flujo-coworking";
 
 const TABS = ["Mapa", "Reservas", "Coworking", "Cafetín y gastos", "Inventario", "Mantenimiento y limpieza"] as const;
 
 export function PanelCasa({ espacios, reservas, directores, casa, camaras, ahora }: { espacios: Espacio[]; reservas: Reserva[]; directores: string[]; casa: typeof CasaData; camaras: Camara[]; ahora: string }) {
   const [tab, setTab] = useState<(typeof TABS)[number]>("Mapa");
   const [lista, setLista] = useState(reservas);
+  const [interesados, setInteresados] = useState<Record<string, string[]>>(() => Object.fromEntries(Object.entries(casa.INTERESADOS).map(([k, v]) => [k, [...v]])));
+  const ETAPAS = Object.keys(casa.INTERESADOS);
+  const mover = (de: string, x: string, paso: number) => setInteresados((m) => {
+    const a = ETAPAS[ETAPAS.indexOf(de) + paso];
+    return a ? { ...m, [de]: m[de].filter((y) => y !== x), [a]: [x, ...m[a]] } : m;
+  });
   const espacio = (id: string) => espacios.find((e) => e.id === id)!;
   const aprobar = (id: string, dir: string) => setLista((l) => l.map((r) => (r.id === id && !r.aprobaciones.includes(dir) ? { ...r, aprobaciones: [...r.aprobaciones, dir] } : r)));
   const rechazar = (id: string, dir: string) => setLista((l) => l.map((r) => (r.id === id ? { ...r, rechazadaPor: dir } : r)));
@@ -81,15 +88,24 @@ export function PanelCasa({ espacios, reservas, directores, casa, camaras, ahora
           <Grid min={200}>
             <Kpi label="Miembros activos" value={casa.COWORKING_MIEMBROS.filter((m) => m.plan === "Mensual").length} note={`Membresía de ${usd(COWORKING.mensual)} al mes`} />
             <Kpi label="Pagos vencidos" value={casa.COWORKING_MIEMBROS.filter((m) => !m.pagado).length} tone="warn" />
-            <Kpi label="Interesados en seguimiento" value={casa.INTERESADOS.Contacto.length + casa.INTERESADOS.Visita.length + casa.INTERESADOS.Prueba.length} />
+            <Kpi label="Interesados en seguimiento" value={interesados.Contacto.length + interesados.Visita.length + interesados.Prueba.length} />
             <Kpi label="Horario" value={<span className="text-base">{COWORKING.horario}</span>} />
           </Grid>
-          <Card title="Interesados en el coworking" subtitle="De contacto a miembro, con recordatorio de seguimiento">
-            <div className="grid gap-3 overflow-x-auto" style={{ gridTemplateColumns: "repeat(5, minmax(180px, 1fr))" }}>
-              {Object.entries(casa.INTERESADOS).map(([etapa, xs]) => (
+          <Card title="Cómo funciona el coworking" subtitle="Flujo de trabajo de que llega un interesado hasta que renueva cada mes">
+            <FlujoCoworking />
+          </Card>
+          <Card title="Interesados en el coworking" subtitle="De contacto a miembro. Usa las flechas para pasar a alguien a la etapa siguiente.">
+            <div className="grid gap-3 overflow-x-auto pb-1" style={{ gridTemplateColumns: "repeat(5, minmax(190px, 1fr))" }}>
+              {Object.entries(interesados).map(([etapa, xs], k) => (
                 <div key={etapa} className="flex flex-col gap-2 rounded-xl bg-surface-2 p-3">
                   <strong className="text-sm">{etapa} <span className="font-normal text-muted">({xs.length})</span></strong>
-                  {xs.map((x) => <span key={x} className="rounded-lg border border-border bg-surface p-2 text-xs">{x}</span>)}
+                  {xs.map((x) => (
+                    <span key={x} className="flex items-center gap-1 rounded-lg border border-border bg-surface p-2 text-xs">
+                      <span className="flex-1">{x}</span>
+                      {k > 0 ? <button type="button" aria-label={`Regresar a ${ETAPAS[k - 1]}`} onClick={() => mover(etapa, x, -1)} className="rounded p-1 text-muted hover:bg-surface-2 hover:text-ink">←</button> : null}
+                      {k < ETAPAS.length - 1 ? <button type="button" aria-label={`Pasar a ${ETAPAS[k + 1]}`} onClick={() => mover(etapa, x, 1)} className="rounded p-1 text-muted hover:bg-surface-2 hover:text-ink">→</button> : null}
+                    </span>
+                  ))}
                 </div>
               ))}
             </div>

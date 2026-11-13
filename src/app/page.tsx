@@ -1,43 +1,52 @@
-import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
-import { AlertTriangle, BellRing, Building2, Cake, CalendarCheck, Cctv, ChevronRight, Church, HeartHandshake, MessageCircle, Route, Users, UserRound, Wallet } from "lucide-react";
+import { AlertTriangle, BellRing, Building2, Cake, CalendarCheck, Cctv, ChevronRight, HeartHandshake, MessageCircle, Route, Users, UserRound, Wallet } from "lucide-react";
 import { CAMARAS } from "@/lib/data/camaras";
 import { estadoReserva } from "@/lib/domain/reservas";
 import { AvisoSimulado, Alerta, Badge, Card, Kpi } from "@/components/ui";
 import { BarrasHorizontales, Columnas, Embudo, IngresosGastos, Linea } from "@/components/charts";
 import {
   alertasDE, alertasFaltas, asistenciaPorEquipo, coberturaPorMes, economiaPorArea, economiaPorMes, embudo,
-  cumpleanosFormadores, db, kpisInicio, nombreCompleto, participantesPorActividad, pendientesSeguimientoHoy, persona, proximasActividades,
+  cumpleanosFormadores, db, kpisInicio, nombreCompleto, participantesPorActividad, pendientesSeguimientoHoy, persona,
 } from "@/lib/data/repo";
-import { fechaLarga, fechaCorta, HOY } from "@/lib/domain/fechas";
+import { fechaCorta } from "@/lib/domain/fechas";
+import { HeroInicio, type Novedad } from "@/components/hero-inicio";
+import { CuentaRegresiva } from "@/components/cuenta-regresiva";
 import { usd } from "@/lib/domain/economia";
 import { INSTAGRAM } from "@/lib/data/instagram";
 import { REQUISITOS, avanceRequisito } from "@/lib/data/requisitos";
-import { TONO_LITURGICO, diaLiturgico, fraseDelDia, proximaCelebracion } from "@/lib/domain/liturgia";
-import { cultosDelDia, horaLegible } from "@/lib/domain/culto";
 
-/** Imagen de la fiesta del día si existe en public/marca/fiestas; si no, la imagen de Cristo. */
-function imagenDelDia(clave?: string) {
-  if (clave) {
-    for (const ext of ["jpg", "png", "webp"]) {
-      const rel = `/marca/fiestas/${clave}.${ext}`;
-      if (existsSync(path.join(process.cwd(), "public", rel))) return { src: rel, fiesta: true };
-    }
-  }
-  return { src: "/marca/cristo.jpg", fiesta: false };
+/** Imágenes de fiestas subidas a public/marca/fiestas (si no hay, el inicio usa la de Cristo). */
+function fiestasDisponibles() {
+  const dir = path.join(process.cwd(), "public", "marca", "fiestas");
+  return existsSync(dir) ? readdirSync(dir).filter((f) => /\.(jpe?g|png|webp)$/i.test(f)) : [];
 }
 
-const RANGO: Record<string, string> = { solemnidad: "Solemnidad", fiesta: "Fiesta", memoria: "Memoria", domingo: "Domingo", feria: "Feria" };
+const ESTADOS_REQ = [
+  { id: "listo", nombre: "Cumplido", clase: "bg-brand" },
+  { id: "en_curso", nombre: "En curso", clase: "bg-[var(--gold)]" },
+  { id: "pendiente", nombre: "Pendiente", clase: "bg-border" },
+] as const;
+
+/** Barra segmentada de partes cumplidas, en curso y pendientes, con su leyenda. */
+function BarraEstados({ cuenta, alto = "h-2", etiqueta }: { cuenta: Record<string, number>; alto?: string; etiqueta: string }) {
+  const total = ESTADOS_REQ.reduce((s, e) => s + (cuenta[e.id] ?? 0), 0) || 1;
+  return (
+    <div role="img" aria-label={`${etiqueta}: ${ESTADOS_REQ.map((e) => `${cuenta[e.id] ?? 0} ${e.nombre.toLowerCase()}`).join(", ")}`} className={`flex ${alto} gap-0.5 overflow-hidden rounded-full`}>
+      {ESTADOS_REQ.filter((e) => cuenta[e.id]).map((e) => (
+        <span key={e.id} title={`${e.nombre}: ${cuenta[e.id]}`} className={`${e.clase} h-full first:rounded-l-full last:rounded-r-full`} style={{ width: `${(cuenta[e.id] / total) * 100}%` }} />
+      ))}
+    </div>
+  );
+}
 
 export default function Inicio() {
   const k = kpisInicio();
   const pasos = pendientesSeguimientoHoy();
   const af = alertasFaltas();
   const ad = alertasDE();
-  const prox = proximasActividades(5);
   const eco = economiaPorArea("10");
 
   const cob = coberturaPorMes();
@@ -55,87 +64,38 @@ export default function Inicio() {
     .sort((a, b) => a.inicio.localeCompare(b.inicio)).slice(0, 4);
   const pendientesAprobar = db.reservas.filter((r) => estadoReserva(r, db.DIRECTORES_SECCION) === "pendiente").length;
   const camOk = CAMARAS.filter((c) => c.estado === "en_linea").length;
-  const lit = diaLiturgico(HOY);
-  const tono = TONO_LITURGICO[lit.color];
-  const frase = fraseDelDia(HOY);
-  const proxima = proximaCelebracion(HOY);
-  const img = imagenDelDia(lit.imagen);
   const cumples = cumpleanosFormadores(45);
-  const cultos = cultosDelDia(HOY);
   const alertas = af.length + ad.length;
   const reqTotal = REQUISITOS.reduce((acc, r) => { const a = avanceRequisito(r); return { listos: acc.listos + a.listos, total: acc.total + a.total }; }, { listos: 0, total: 0 });
   const reqPct = { ...reqTotal, pct: Math.round((reqTotal.listos / reqTotal.total) * 100) };
-  const novedades = [
+  const cuentaReq = (partes: { estado: string }[]) => Object.fromEntries(ESTADOS_REQ.map((e) => [e.id, partes.filter((p) => p.estado === e.id).length]));
+  const reqCuenta = cuentaReq(REQUISITOS.flatMap((r) => r.partes));
+  const novedades: Novedad[] = [
     { titulo: "mensajes de seguimiento", valor: mensajes, href: "/seguimiento", icono: <MessageCircle size={18} /> },
     { titulo: "alertas de faltas y DE", valor: alertas, href: "#alertas", icono: <AlertTriangle size={18} /> },
     { titulo: "reservas por aprobar", valor: pendientesAprobar, href: "/casa", icono: <Building2 size={18} /> },
     { titulo: cumples[0] ? `cumpleaños; el próximo en ${cumples[0].faltan} días` : "cumpleaños próximos", valor: cumples.length, href: "#cumpleanos", icono: <Cake size={18} /> },
-    { titulo: cultos.length ? cultos.map((c) => c.tipo.toLowerCase()).join(" y ") + " en la capilla" : "hoy no hay misa en la casa", valor: cultos.length ? horaLegible(cultos[0].inicio) : "—", href: "/casa#horarios", icono: <Church size={18} /> },
   ];
   const span = (n: 4 | 5 | 6 | 7 | 8 | 12) => clsx({ 4: "lg:col-span-4", 5: "lg:col-span-5", 6: "lg:col-span-6", 7: "lg:col-span-7", 8: "lg:col-span-8", 12: "lg:col-span-12" }[n]);
 
   return (
     <>
-      <section className="relative overflow-hidden rounded-3xl bg-[linear-gradient(120deg,#5b0d14_0%,#8a1b24_55%,#a3222b_100%)] text-white">
-        <div aria-hidden className="absolute inset-y-0 right-0 hidden w-[44%] md:block">
-          <Image src={img.src} alt="" fill sizes="44vw" priority className="object-cover object-[50%_20%]" />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,#8a1b24_0%,rgba(138,27,36,0.55)_35%,rgba(138,27,36,0)_70%)]" />
-        </div>
-        {lit.rango === "solemnidad" || lit.rango === "fiesta" || lit.rc ? (
-          <p className="absolute bottom-[132px] right-4 z-10 hidden max-w-[36%] rounded-full bg-black/45 px-3 py-1.5 text-right text-xs font-semibold backdrop-blur md:block">
-            {RANGO[lit.rango]} de {lit.nombre}
-          </p>
-        ) : null}
-        <div className="relative z-10 flex flex-col gap-5 p-6 sm:p-8 md:max-w-[60%]">
-          <div className="flex items-center gap-3">
-            <Image src="/marca/rc-escudo.png" alt="Regnum Christi" width={52} height={52} priority className="size-13 rounded-full ring-2 ring-white/30" />
-            <div className="flex flex-col leading-tight">
-              <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/75">Regnum Christi · Jóvenes Barquisimeto</span>
-              <span className="text-sm text-white/85 first-letter:uppercase">{fechaLarga(HOY)}</span>
-            </div>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-lg font-semibold text-white/90">Buenos días, Jean</span>
-            <h1 className="font-serif text-5xl font-bold italic leading-[1.05] tracking-tight sm:text-6xl">¡Venga tu Reino!</h1>
-          </div>
-          <div className="flex flex-col gap-2">
-            <span className="flex flex-wrap items-center gap-2 text-sm">
-              <span aria-hidden className="size-3 rounded-full ring-2 ring-white/60" style={{ background: tono.fondo }} />
-              <strong>{lit.nombre}</strong>
-              <span className="text-white/75">· {RANGO[lit.rango]} · {lit.tiempo} · color {tono.nombre.toLowerCase()}</span>
-            </span>
-            <blockquote className="border-l-2 border-[var(--gold)] pl-3 font-serif text-base italic text-white/95 sm:text-lg">
-              «{frase.texto}» <cite className="not-italic text-sm text-white/70">{frase.cita}</cite>
-            </blockquote>
-            {proxima ? <span className="text-xs text-white/75">Próxima celebración: {proxima.nombre}, {fechaLarga(`${proxima.fecha}T12:00:00`)}</span> : null}
-          </div>
-        </div>
-        <div className="relative z-10 border-t border-white/15 bg-black/20 px-4 py-3 backdrop-blur-sm sm:px-6">
-          <h2 className="sr-only">Novedades de hoy</h2>
-          <ul className="grid grid-cols-2 gap-2 lg:grid-cols-5">
-            {novedades.map((n) => (
-              <li key={n.titulo}>
-                <Link href={n.href} className="flex h-full items-center gap-3 rounded-xl bg-white/10 px-3 py-2.5 text-white no-underline transition-colors hover:bg-white/20">
-                  <span aria-hidden className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white/15">{n.icono}</span>
-                  <span className="flex min-w-0 flex-col leading-tight">
-                    <strong className="text-lg tabular-nums">{n.valor}</strong>
-                    <span className="line-clamp-2 text-xs text-white/80">{n.titulo}</span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <HeroInicio nombre="Jean" novedades={novedades} fiestas={fiestasDisponibles()} respaldo="2026-11-01T09" />
       <AvisoSimulado />
 
       <section aria-labelledby="req-titulo" className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-5">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div className="flex flex-col gap-0.5">
-            <h2 id="req-titulo" className="text-base font-extrabold">Requisitos del CRM (P. Elías)</h2>
-            <p className="text-xs text-muted">Avance de cada pedido del documento, para supervisar lo que falta</p>
+            <h2 id="req-titulo" className="text-base font-extrabold">Aspectos generales CRM</h2>
+            <p className="text-xs text-muted">Lo que pidió el P. Elías en el documento del CRM y cuánto está cumplido</p>
           </div>
-          <span className="text-sm font-semibold text-ink-2"><strong className="text-2xl font-extrabold text-ink tabular-nums">{reqPct.pct} %</strong> listo · {reqTotal.listos} de {reqTotal.total} partes</span>
+          <span className="text-sm font-semibold text-ink-2"><strong className="text-2xl font-extrabold text-ink tabular-nums">{reqPct.pct} %</strong> cumplido · {reqTotal.listos} de {reqTotal.total} partes</span>
+        </div>
+        <div className="flex flex-col gap-2">
+          <BarraEstados cuenta={reqCuenta} alto="h-4" etiqueta="Partes de los requisitos" />
+          <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-2">
+            {ESTADOS_REQ.map((e) => <li key={e.id} className="flex items-center gap-1.5"><span aria-hidden className={`size-3 rounded-sm ${e.clase}`} />{e.nombre} <strong className="tabular-nums text-ink">{reqCuenta[e.id]}</strong></li>)}
+          </ul>
         </div>
         <ol className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {REQUISITOS.map((r) => {
@@ -148,9 +108,7 @@ export default function Inicio() {
                   <ChevronRight size={16} aria-hidden className="mt-0.5 shrink-0 text-muted" />
                 </Link>
                 <div className="flex items-center gap-2">
-                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-border" role="progressbar" aria-valuenow={av.pct} aria-valuemin={0} aria-valuemax={100} aria-label={`Avance del requisito ${r.n}`}>
-                    <div className="h-full rounded-full bg-brand" style={{ width: `${av.pct}%` }} />
-                  </div>
+                  <div className="flex-1"><BarraEstados cuenta={cuentaReq(r.partes)} etiqueta={`Requisito ${r.n}`} /></div>
                   <span className="text-xs font-semibold tabular-nums text-ink-2">{av.listos}/{av.total}</span>
                 </div>
                 {faltan.length ? (
@@ -253,20 +211,7 @@ export default function Inicio() {
         </Card>
 
         <Card className={span(4)} title="Próximas actividades" action={<Link href="/calendario" className="text-sm font-semibold">Calendario</Link>}>
-          <ul className="flex flex-col">
-            {prox.map((a) => (
-              <li key={a.id} className="flex items-center gap-3 border-b border-border py-2.5 last:border-0">
-                <div className="flex w-12 flex-col items-center">
-                  <span className="text-2xl font-extrabold text-accent tabular-nums">{a.faltan}</span>
-                  <span className="text-[11px] text-muted">{a.faltan === 1 ? "día" : "días"}</span>
-                </div>
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <strong className="text-sm">{a.nombre}</strong>
-                  <span className="truncate text-xs text-muted">{fechaLarga(a.inicio)}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <CuentaRegresiva max={5} items={db.actividades.map((a) => ({ id: a.id, nombre: a.nombre, inicio: a.inicio }))} />
         </Card>
         <Card className={span(4)} title="La casa" subtitle="Próximas reservas y cámaras" action={<Link href="/casa" className="text-sm font-semibold">Ver mapa</Link>}>
           <ul className="flex flex-col gap-2">

@@ -1,5 +1,5 @@
 import { AvisoSimulado, PageHeader } from "@/components/ui";
-import { formadores, nombreCompleto } from "@/lib/data/repo";
+import { db, formadores, nombreCompleto } from "@/lib/data/repo";
 import { CUENTA_ALBUMES } from "@/lib/data/avisos";
 import { CAMBIOS_SYNC, CAMPOS_FORMULARIO, EDICIONES, GASTOS_RETIRO, INVITADOS, MENUS, PAGOS, PROVEEDORES, TAREAS, TASA_BCV } from "@/lib/data/retiros";
 import { PanelRetiros } from "./panel";
@@ -24,7 +24,8 @@ export default function Retiros() {
       <AvisoSimulado />
       <PanelRetiros d={{
         ediciones: EDICIONES, cambios: CAMBIOS_SYNC, menus: MENUS, tareas: TAREAS, proveedores: PROVEEDORES, invitados: INVITADOS,
-        equiposInvitados: [...new Set(INVITADOS.map((i) => i.equipo))], pagos: PAGOS, gastos: GASTOS_RETIRO, tasa: TASA_BCV,
+        equiposInvitados: [...new Set(INVITADOS.map((i) => i.equipo))],
+        sugerencias: db.personas.slice(0, 160).map((p) => ({ nombre: `${p.nombre} ${p.apellido.split(" ")[0]}`, equipo: db.equipos.find((e) => e.miembros.includes(p.id))?.nombre })), pagos: PAGOS, gastos: GASTOS_RETIRO, tasa: TASA_BCV,
         campos: CAMPOS_FORMULARIO, formadoresFaltan: faltanPorEdicion(), cuenta: CUENTA_ALBUMES,
       }} />
     </>

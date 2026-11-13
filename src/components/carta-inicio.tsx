@@ -1,10 +1,15 @@
+"use client";
+
 import Image from "next/image";
 import type { ReactNode } from "react";
 import { TONO_LITURGICO, diaLiturgico, fraseDelDia, proximaCelebracion } from "@/lib/domain/liturgia";
 import { fechaLarga } from "@/lib/domain/fechas";
+import { saludoPorHora, useHoy } from "./hoy";
 
-/** Carta de inicio (como la del módulo Inicio) en versión compacta: saludo, día litúrgico y frase. */
-export function CartaInicio({ hoy, saludo, subtitulo, children }: { hoy: Date; saludo: string; subtitulo?: string; children?: ReactNode }) {
+/** Carta de inicio (como la del módulo Inicio) en versión compacta: saludo, día litúrgico y frase del día real. */
+export function CartaInicio({ nombre, subtitulo, children }: { nombre: string; subtitulo?: string; children?: ReactNode }) {
+  const { date: hoy, hora } = useHoy("2026-11-01T09");
+  const saludo = `${saludoPorHora(hora)}, ${nombre}`;
   const lit = diaLiturgico(hoy);
   const tono = TONO_LITURGICO[lit.color];
   const frase = fraseDelDia(hoy);

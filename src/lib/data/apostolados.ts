@@ -23,16 +23,21 @@ export type TipoEnlace = "minuta" | "formulario" | "drive" | "instagram" | "what
 
 export interface Enlace { tipo: TipoEnlace; titulo: string; url: string; fecha?: string }
 
-/** Enlaces de cada apostolado. Las URL son marcadores hasta conectar las cuentas reales. */
+/** Enlaces de cada apostolado. Mientras no se conecten las cuentas reales, abren el servicio de Google o Meta correspondiente. */
+export const URL_SERVICIO: Record<TipoEnlace, string> = {
+  minuta: "/documentos", formulario: "https://docs.google.com/forms/", hoja: "https://docs.google.com/spreadsheets/",
+  drive: "https://drive.google.com/drive/folders/1rbCxHNNKvcpGCvNWOkH9vmFyZYpQFt_8", calendario: "https://calendar.google.com/",
+  whatsapp: "https://web.whatsapp.com/", instagram: "https://www.instagram.com/",
+};
 export function enlacesDe(apostoladoId: string): Enlace[] {
   return [
-    { tipo: "minuta", titulo: "Minuta de la última reunión", url: "#", fecha: "2026-10-27" },
-    { tipo: "minuta", titulo: "Minuta de planificación del ciclo", url: "#", fecha: "2026-09-08" },
-    { tipo: "formulario", titulo: "Formulario de inscripción (Google Forms)", url: "#" },
-    { tipo: "hoja", titulo: "Hoja de respuestas conectada", url: "#" },
-    { tipo: "drive", titulo: "Carpeta de Drive del apostolado", url: "#" },
-    { tipo: "calendario", titulo: "Calendario del apostolado", url: "#" },
-    { tipo: "whatsapp", titulo: "Grupo de servidores", url: "#" },
-    ...(["gpr", "search", "jfm", "music"].includes(apostoladoId) ? [{ tipo: "instagram" as const, titulo: "Cuenta de Instagram", url: "#" }] : []),
+    { tipo: "minuta", titulo: "Minuta de la última reunión", url: `/documentos?area=${apostoladoId}`, fecha: "2026-10-27" },
+    { tipo: "minuta", titulo: "Minuta de planificación del ciclo", url: `/documentos?area=${apostoladoId}`, fecha: "2026-09-08" },
+    { tipo: "formulario", titulo: "Formulario de inscripción (Google Forms)", url: URL_SERVICIO.formulario },
+    { tipo: "hoja", titulo: "Hoja de respuestas conectada", url: URL_SERVICIO.hoja },
+    { tipo: "drive", titulo: "Carpeta de Drive del apostolado", url: URL_SERVICIO.drive },
+    { tipo: "calendario", titulo: "Calendario del apostolado", url: URL_SERVICIO.calendario },
+    { tipo: "whatsapp", titulo: "Grupo de servidores", url: URL_SERVICIO.whatsapp },
+    ...(["gpr", "search", "jfm", "music"].includes(apostoladoId) ? [{ tipo: "instagram" as const, titulo: "Cuenta de Instagram", url: URL_SERVICIO.instagram }] : []),
   ];
 }

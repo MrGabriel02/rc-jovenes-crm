@@ -9,7 +9,7 @@ export const metadata = { title: "Documentos" };
 export default function Documentos() {
   return (
     <>
-      <PageHeader title="Documentos" description="Los archivos viven en una carpeta de Google Drive de la sección y se enlazan a cada actividad, apostolado o persona." actions={<><LinkButton href="#" variant="secondary">Abrir carpeta de Drive</LinkButton><LinkButton href="#">Subir documento</LinkButton></>} />
+      <PageHeader title="Documentos" description="Los archivos viven en una carpeta de Google Drive de la sección y se enlazan a cada actividad, apostolado o persona." actions={<><LinkButton href="https://drive.google.com/drive/folders/1rbCxHNNKvcpGCvNWOkH9vmFyZYpQFt_8" external variant="secondary">Abrir carpeta de Drive</LinkButton><LinkButton href="#subir">Subir documento</LinkButton></>} />
       <AvisoSimulado />
       <Suspense>
         <ListaDocumentos documentos={DOCUMENTOS} areas={[{ id: "seccion", nombre: "Sección" }, ...db.apostolados.map((x) => ({ id: x.id, nombre: nombreArea(x.id) }))]} />

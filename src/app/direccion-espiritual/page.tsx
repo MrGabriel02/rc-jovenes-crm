@@ -30,7 +30,7 @@ export default async function DireccionEspiritual() {
         <Kpi label="3 meses o más sin DE" value={al.filter((a) => a.nivel === "crecimiento").length} tone="warn" />
       </Grid>
       <AgendaDE acompanantes={ACOMPANANTES} citas={AGENDA_SEMANA} dirigidos={Object.fromEntries(ACOMPANANTES.map((a) => [a.id, dirigidosPor(a.id)]))} hoy={HOY.toISOString().slice(0, 10)} />
-      <Confirmaciones sesiones={pend.map((s) => ({ id: s.id, persona: nombreCompleto(persona(s.personaId)), director: db.directores.find((d) => d.id === s.directorId)!.nombre, inicio: s.inicio }))} />
+      <Confirmaciones sesiones={pend.map((s) => ({ id: s.id, persona: nombreCompleto(persona(s.personaId)), director: db.directores.find((d) => d.id === s.directorId)!.nombre, inicio: s.inicio }))} personas={db.personas.slice(0, 120).map(nombreCompleto)} directores={db.directores.map((d) => d.nombre)} />
       <Card title="Enlaces y QR de las agendas" subtitle="Van en el mensaje del día 2 post retiro, en los grupos de equipo y en afiches de la casa">
         <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))" }}>
           {ACOMPANANTES.map((d, i) => (

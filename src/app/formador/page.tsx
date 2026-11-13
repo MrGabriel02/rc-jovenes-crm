@@ -44,7 +44,7 @@ export default function Formador() {
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-5">
       <Link href="/configuracion" className="inline-flex min-h-10 items-center gap-1 self-start text-sm font-semibold"><ArrowLeft size={16} aria-hidden />Volver a la administración</Link>
       <AvisoSimulado />
-      <CartaInicio hoy={HOY} saludo={`Buenos días, ${yo.nombre}`} subtitulo={`Director de ${a.nombre}`} />
+      <CartaInicio nombre={yo.nombre} subtitulo={`Director de ${a.nombre}`} />
 
       <section aria-labelledby="mi-ap" className="flex flex-col gap-3 rounded-3xl border border-border bg-surface p-5">
         <div className="flex items-center gap-3">

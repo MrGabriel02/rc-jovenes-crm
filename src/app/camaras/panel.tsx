@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
-import { Expand, HardDrive, MapPin, WifiOff } from "lucide-react";
+import { Expand, HardDrive, History, MapPin, Radio, WifiOff } from "lucide-react";
 import { Badge, Button } from "@/components/ui";
 import type { Camara } from "@/lib/data/camaras";
 
@@ -23,7 +23,7 @@ function Reloj({ base }: { base: string }) {
   return <span className="tabular-nums" suppressHydrationWarning>{d.toLocaleDateString("es-VE")} {d.toLocaleTimeString("es-VE")}</span>;
 }
 
-function Vista({ c, grande, ahora }: { c: Camara; grande?: boolean; ahora: string }) {
+function Vista({ c, grande, ahora, grabacion }: { c: Camara; grande?: boolean; ahora: string; grabacion?: string | null }) {
   const caida = c.estado === "sin_conexion";
   return (
     <div className={clsx("relative overflow-hidden rounded-xl bg-[#120a0b] text-white", grande ? "aspect-video" : "aspect-video")}>
@@ -43,7 +43,7 @@ function Vista({ c, grande, ahora }: { c: Camara; grande?: boolean; ahora: strin
       ) : (<>
       <div className="absolute inset-x-0 top-0 flex items-center justify-between bg-gradient-to-b from-black/60 to-transparent px-3 py-2 text-xs">
         <span className="font-bold">{c.nombre}</span>
-        {!caida ? <span className="flex items-center gap-1.5 font-bold"><span className="size-2 animate-pulse rounded-full bg-red-500" />EN VIVO</span> : null}
+        {grabacion ? <span className="rounded bg-white/20 px-1.5 py-0.5 font-bold">GRABACIÓN · {grabacion}</span> : !caida ? <span className="flex items-center gap-1.5 font-bold"><span className="size-2 animate-pulse rounded-full bg-red-500" />EN VIVO</span> : null}
       </div>
       <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-black/60 to-transparent px-3 py-2 text-[11px] text-white/85">
         <Reloj base={ahora} />
@@ -56,16 +56,20 @@ function Vista({ c, grande, ahora }: { c: Camara; grande?: boolean; ahora: strin
 
 export function PanelCamaras({ camaras, ahora }: { camaras: Camara[]; ahora: string }) {
   const [sel, setSel] = useState(camaras[0].id);
+  const [verSD, setVerSD] = useState(false);
+  const [grabacion, setGrabacion] = useState<string | null>(null);
+  const pantalla = useRef<HTMLDivElement>(null);
   const c = camaras.find((x) => x.id === sel)!;
+  const dias = Array.from({ length: Math.min(c.diasGrabados, 7) }, (_, i) => { const d = new Date(ahora); d.setDate(d.getDate() - i); return d.toLocaleDateString("es-VE", { weekday: "short", day: "numeric", month: "short" }); });
   const pct = c.sdTotalGB ? Math.round((c.sdUsadaGB / c.sdTotalGB) * 100) : 0;
 
   return (
     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
       <section aria-label="Vista en vivo" className="flex min-w-0 flex-col gap-3 rounded-2xl border border-border bg-surface p-4">
-        <Vista c={c} grande ahora={ahora} />
+        <div ref={pantalla} className="[&:fullscreen]:flex [&:fullscreen]:items-center [&:fullscreen]:bg-black"><div className="w-full"><Vista c={c} grande ahora={ahora} grabacion={grabacion} /></div></div>
         <div className="grid gap-2" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))" }}>
           {camaras.map((x) => (
-            <button key={x.id} id={x.id} type="button" onClick={() => setSel(x.id)} aria-pressed={x.id === sel}
+            <button key={x.id} id={x.id} type="button" onClick={() => { setSel(x.id); setGrabacion(null); }} aria-pressed={x.id === sel}
               className={clsx("flex flex-col gap-1.5 rounded-xl p-1.5 text-left transition-colors", x.id === sel ? "bg-accent-soft ring-2 ring-brand" : "hover:bg-surface-2")}>
               <Vista c={x} ahora={ahora} />
               <span className="px-1 text-xs font-semibold">{x.nombre}</span>
@@ -88,8 +92,16 @@ export function PanelCamaras({ camaras, ahora }: { camaras: Camara[]; ahora: str
           <span className="text-xs text-muted">{c.diasGrabados} días grabados. Al llenarse, la cámara sobrescribe lo más antiguo.</span>
         </div>
         <div className="flex flex-col gap-2">
-          <Button variant="secondary"><Expand size={16} aria-hidden />Pantalla completa</Button>
-          <Button variant="secondary">Ver grabaciones de la SD</Button>
+          <Button variant="secondary" onClick={() => { pantalla.current?.requestFullscreen?.().catch(() => {}); }}><Expand size={16} aria-hidden />Pantalla completa</Button>
+          <Button variant="secondary" aria-expanded={verSD} onClick={() => setVerSD((v) => !v)}><History size={16} aria-hidden />{verSD ? "Ocultar grabaciones" : "Ver grabaciones de la SD"}</Button>
+          {verSD ? (
+            <ul className="flex flex-col gap-1 rounded-xl bg-surface-2 p-2 text-sm">
+              {grabacion ? <li><button type="button" onClick={() => setGrabacion(null)} className="flex min-h-10 w-full items-center gap-2 rounded-lg px-2 font-semibold hover:bg-surface"><Radio size={14} aria-hidden className="text-brand" />Volver a la vista en vivo</button></li> : null}
+              {dias.length ? dias.map((d) => (
+                <li key={d}><button type="button" aria-pressed={grabacion === d} onClick={() => setGrabacion(d)} className={clsx("flex min-h-10 w-full items-center justify-between rounded-lg px-2 text-left hover:bg-surface", grabacion === d && "bg-surface font-semibold")}><span className="first-letter:uppercase">{d}</span><span className="text-xs text-muted">24 h</span></button></li>
+              )) : <li className="px-2 py-1 text-muted">Esta cámara no tiene grabaciones.</li>}
+            </ul>
+          ) : null}
           <a href="/casa" className="text-center text-sm font-semibold">Ver en el mapa de la casa</a>
         </div>
         <p className="rounded-lg bg-surface-2 p-3 text-xs text-ink-2">Cada vez que alguien abre una cámara queda registrado quién la vio y cuándo.</p>

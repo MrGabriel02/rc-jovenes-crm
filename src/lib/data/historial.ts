@@ -65,7 +65,7 @@ export function servidoresDe(apostoladoId: string) {
 }
 
 /** Formularios y tablas conectadas de cada apostolado. */
-export const formulariosDe = (apostoladoId: string) => historialDe(apostoladoId).slice(-3).map((e) => ({ nombre: `${e.nombre} (respuestas)`, form: "#", hoja: "#", fecha: e.fecha }));
+export const formulariosDe = (apostoladoId: string) => historialDe(apostoladoId).slice(-3).map((e) => ({ nombre: `${e.nombre} (respuestas)`, form: "https://docs.google.com/forms/", hoja: "https://docs.google.com/spreadsheets/", fecha: e.fecha }));
 
 const LOGO_COLOR: Record<string, string> = { gpr: "#1f4e79", search: "#c2410c", todosuno: "#0f766e", jfm: "#15803d", sd: "#7c3aed", solidaridad: "#b45309", music: "#be185d", kerigma: "#8a1b24", cruzadas: "#475569", quodagis: "#0e7490" };
 export const colorApostolado = (id: string) => LOGO_COLOR[id] ?? "#8a1b24";

@@ -22,6 +22,7 @@ export function InformesApostolados({ filas: ini, hoy, apostolados }: { filas: F
   const [filas, setFilas] = useState(ini);
   const [filtro, setFiltro] = useState<"todos" | "pendiente">("todos");
   const [sync, setSync] = useState(false);
+  const [adjunto, setAdjunto] = useState("");
   const est = (f: FilaInforme) => estadoInforme(f, hoy);
   const visibles = filas.filter((f) => est(f) !== "no_toca" && (filtro === "todos" || est(f) === "pendiente")).sort((a, b) => b.fecha.localeCompare(a.fecha));
   const pend = filas.filter((f) => est(f) === "pendiente").length;
@@ -80,6 +81,7 @@ export function InformesApostolados({ filas: ini, hoy, apostolados }: { filas: F
           const id = String(f.get("retiro"));
           setFilas((l) => l.map((x) => (x.id === id ? { ...x, entregado: hoy, ingresosUSD: Number(f.get("ingresos")) || x.ingresosUSD, gastosUSD: Number(f.get("gastos")) || x.gastosUSD, hoja: !!f.get("hoja") || x.hoja } : x)));
           e.currentTarget.reset();
+          setAdjunto("");
         }}>
           <label className="flex flex-col gap-1 text-sm font-semibold">Retiro
             <select name="retiro" className={campo}>{filas.filter((x) => !x.entregado && est(x) !== "no_toca").map((x) => <option key={x.id} value={x.id}>{x.apostolado} · {x.retiro}</option>)}</select>
@@ -87,7 +89,7 @@ export function InformesApostolados({ filas: ini, hoy, apostolados }: { filas: F
           <label className="flex flex-col gap-1 text-sm font-semibold">Ingresos ($)<input name="ingresos" type="number" min={0} step="0.01" className={campo} /></label>
           <label className="flex flex-col gap-1 text-sm font-semibold">Gastos ($)<input name="gastos" type="number" min={0} step="0.01" className={campo} /></label>
           <label className="flex flex-col gap-1 text-sm font-semibold">Tabla de economía<input name="hoja" type="url" placeholder="https://docs.google.com/spreadsheets/…" className={campo} /></label>
-          <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 self-end rounded-xl border border-border px-3 text-sm font-semibold"><FileUp size={16} aria-hidden />Adjuntar informe (Word o PDF)<input type="file" accept=".doc,.docx,.pdf" className="sr-only" /></label>
+          <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 self-end rounded-xl border border-border px-3 text-sm font-semibold"><FileUp size={16} aria-hidden /><span className="truncate">{adjunto || "Adjuntar informe (Word o PDF)"}</span><input type="file" accept=".doc,.docx,.pdf" className="sr-only" onChange={(e) => setAdjunto(e.target.files?.[0]?.name ?? "")} /></label>
           <div className="col-span-full"><Button type="submit">Marcar como entregado</Button></div>
         </form>
       </Card>
