@@ -112,7 +112,40 @@ export function SeguimientoAsociados({ lista, setLista, equipos, sugerencias }: 
           <p className="basis-full text-xs text-muted">Entra con la invitación marcada. Puedes seguir agregando sin cerrar.</p>
         </form>
       ) : null}
-      <div className="relative overflow-x-auto rounded-xl border border-border">
+      {/* Teléfono: una ficha por joven con los pasos como casillas grandes. */}
+      <ul className="flex flex-col gap-2 md:hidden">
+        {visibles.map((i) => {
+          const ultimo = [...PASOS_INVITACION].reverse().find((k) => i.pasos[k]);
+          const sig = siguiente(i);
+          return (
+            <li key={i.id} className={`flex flex-col gap-2 rounded-xl border border-border bg-surface p-3 ${i.no ? "text-muted" : ""}`} style={ultimo && !i.no ? { boxShadow: `inset 4px 0 0 ${TONO_PASO[ultimo]}` } : undefined}>
+              <div className="flex items-start gap-2">
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <strong className={`text-sm ${i.no ? "line-through" : ""}`}>{lista.indexOf(i) + 1}. {i.nombre}</strong>
+                  <span className="text-xs text-muted">{i.equipo} · {i.no ? "No se asocia" : sig ? `Sigue: ${COLUMNA[sig]}` : <span className="font-semibold text-good-ink">Completo</span>}</span>
+                </span>
+                <button type="button" aria-label={`Quitar a ${i.nombre} de la lista`} onClick={() => setLista((l) => l.filter((x) => x.id !== i.id))} className="-m-1 rounded-lg p-2 text-muted hover:text-ink"><Trash2 size={16} /></button>
+              </div>
+              <div className="grid grid-cols-6 gap-1">
+                {PASOS_INVITACION.map((k) => (
+                  <label key={k} className="relative flex cursor-pointer flex-col items-center gap-1 text-center text-[10px] font-semibold leading-tight text-muted">
+                    <input type="checkbox" checked={i.pasos[k]} onChange={() => alternar(i.id, k)} aria-label={`${COLUMNA[k]}: ${i.nombre}`} className="peer sr-only" />
+                    <span aria-hidden className="flex size-10 items-center justify-center rounded-lg border border-border text-white peer-focus-visible:ring-2 peer-focus-visible:ring-brand" style={i.pasos[k] ? { background: TONO_PASO[k], borderColor: TONO_PASO[k] } : undefined}>{i.pasos[k] ? <Check size={16} /> : null}</span>
+                    {k === "de" ? "Dir. espiritual" : COLUMNA[k]}
+                  </label>
+                ))}
+                <label className="relative flex cursor-pointer flex-col items-center gap-1 text-center text-[10px] font-semibold leading-tight text-muted">
+                  <input type="checkbox" checked={i.no} onChange={() => setLista((l) => l.map((x) => (x.id === i.id ? { ...x, no: !x.no } : x)))} aria-label={`Dijo que no: ${i.nombre}`} className="peer sr-only" />
+                  <span aria-hidden className={`flex size-10 items-center justify-center rounded-lg border peer-focus-visible:ring-2 peer-focus-visible:ring-brand ${i.no ? "border-warn-border bg-warn-bg text-warn-ink" : "border-border"}`}>{i.no ? <X size={16} /> : null}</span>
+                  No
+                </label>
+              </div>
+            </li>
+          );
+        })}
+        {!visibles.length ? <li className="rounded-xl border border-border p-4 text-center text-sm text-muted">Nadie con ese filtro.</li> : null}
+      </ul>
+      <div className="relative hidden overflow-x-auto rounded-xl border border-border md:block">
         <table className="w-full min-w-[860px] text-sm">
           <thead className="bg-surface-2">
             <tr className="text-left text-muted">
@@ -194,7 +227,7 @@ export function ActaAsociacion({ nombres, anio, fechaRetiro }: { nombres: string
         {lista.map((n, i) => (
           <li key={n + i} className="flex items-center justify-between gap-2 border-b border-border py-1 last:border-0">
             <span><span className="text-muted tabular-nums">{i + 1}.</span> {n}</span>
-            <button type="button" aria-label={`Quitar a ${n}`} onClick={() => { setQuitados((q) => new Set(q).add(n)); setExtras((l) => l.filter((x) => x !== n)); }} className="p-1 text-muted hover:text-ink"><X size={14} /></button>
+            <button type="button" aria-label={`Quitar a ${n}`} onClick={() => { setQuitados((q) => new Set(q).add(n)); setExtras((l) => l.filter((x) => x !== n)); }} className="flex size-9 items-center justify-center rounded-lg text-muted hover:text-ink"><X size={14} /></button>
           </li>
         ))}
       </ol>

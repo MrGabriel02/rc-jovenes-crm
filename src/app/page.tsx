@@ -240,15 +240,15 @@ export default function Inicio() {
         <Card className={span(12)} title="Economía de octubre" subtitle="Por apostolado o área, en dólares" action={<Link href="/economia" className="text-sm font-semibold">Informe</Link>}>
           <div className="overflow-x-auto">
             <table className="w-full min-w-96 text-sm">
-              <thead><tr className="text-left text-muted"><th className="py-2 font-semibold">Área</th><th className="py-2 text-right font-semibold">Ingresos</th><th className="py-2 text-right font-semibold">Gastos</th><th className="py-2 text-right font-semibold">Resultado</th><th className="py-2 text-right font-semibold">10 % localidad</th></tr></thead>
+              <thead><tr className="text-left text-muted"><th className="px-2 py-2 font-semibold">Área</th><th className="px-2 py-2 text-right font-semibold">Ingresos</th><th className="px-2 py-2 text-right font-semibold">Gastos</th><th className="px-2 py-2 text-right font-semibold">Resultado</th><th className="px-2 py-2 text-right font-semibold">10 % localidad</th></tr></thead>
               <tbody>
                 {eco.map((e) => (
                   <tr key={e.areaId} className="border-t border-border">
-                    <td className="py-2">{db.apostolados.some((x) => x.id === e.areaId) ? <Link href={`/apostolados/${e.areaId}`}>{e.nombre}</Link> : e.nombre}</td>
-                    <td className="py-2 text-right tabular-nums">{usd(e.ingresosUSD)}</td>
-                    <td className="py-2 text-right tabular-nums">{usd(e.gastosUSD)}</td>
-                    <td className={`py-2 text-right font-bold tabular-nums ${e.ganancia >= 0 ? "text-good-ink" : "text-warn-ink"}`}>{usd(e.ganancia)}</td>
-                    <td className="py-2 text-right tabular-nums">{usd(e.aporteLocalidad)}</td>
+                    <td className="px-2 py-2">{db.apostolados.some((x) => x.id === e.areaId) ? <Link href={`/apostolados/${e.areaId}`}>{e.nombre}</Link> : e.nombre}</td>
+                    <td className="px-2 py-2 text-right tabular-nums">{usd(e.ingresosUSD)}</td>
+                    <td className="px-2 py-2 text-right tabular-nums">{usd(e.gastosUSD)}</td>
+                    <td className={`px-2 py-2 text-right font-bold tabular-nums ${e.ganancia >= 0 ? "text-good-ink" : "text-warn-ink"}`}>{usd(e.ganancia)}</td>
+                    <td className="px-2 py-2 text-right tabular-nums">{usd(e.aporteLocalidad)}</td>
                   </tr>
                 ))}
               </tbody>

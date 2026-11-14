@@ -62,8 +62,8 @@ export function PanelFormacion({ ponentesIni, charlasIni, temasIni, hoy }: { pon
   );
   const acciones = (onEdit: () => void, onDel: () => void, etiqueta: string) => (
     <span className="flex shrink-0 gap-1">
-      <button type="button" aria-label={`Editar ${etiqueta}`} onClick={onEdit} className="rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-ink"><Pencil size={14} /></button>
-      <button type="button" aria-label={`Eliminar ${etiqueta}`} onClick={onDel} className="rounded-lg p-2 text-muted hover:bg-surface-2 hover:text-ink"><Trash2 size={14} /></button>
+      <button type="button" aria-label={`Editar ${etiqueta}`} onClick={onEdit} className="flex size-10 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-ink"><Pencil size={14} /></button>
+      <button type="button" aria-label={`Eliminar ${etiqueta}`} onClick={onDel} className="flex size-10 items-center justify-center rounded-lg text-muted hover:bg-surface-2 hover:text-ink"><Trash2 size={14} /></button>
     </span>
   );
 

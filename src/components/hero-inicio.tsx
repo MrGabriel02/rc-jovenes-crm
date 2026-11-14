@@ -52,7 +52,7 @@ export function HeroInicio({ nombre, novedades, fiestas, respaldo }: { nombre: s
           <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
             <span aria-hidden className="size-3 rounded-full ring-2 ring-white/60" style={{ background: tono.fondo }} />
             <strong>{lit.nombre}</strong>
-            <span className="text-white/75">· {RANGO[lit.rango]} · {lit.tiempo} · color {tono.nombre.toLowerCase()}</span>
+            <span className="basis-full text-white/75 sm:basis-auto"><span className="hidden sm:inline">· </span>{RANGO[lit.rango]} · {lit.tiempo} · color {tono.nombre.toLowerCase()}</span>
           </span>
           <blockquote className="border-l-2 border-[var(--gold)] pl-3 font-serif text-base italic text-white/95 sm:text-lg">
             «{frase.texto}» <cite className="not-italic text-sm text-white/70">{frase.cita}</cite>

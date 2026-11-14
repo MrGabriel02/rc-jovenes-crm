@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 export function PageHeader({ title, description, actions }: { title: string; description?: ReactNode; actions?: ReactNode }) {
   return (
@@ -153,6 +153,12 @@ export function AvisoSimulado() {
 }
 
 export function Grid({ children, min = 320 }: { children: ReactNode; min?: number }) {
+  // Fichas pequeñas (min ≤ 220): en el teléfono van de a dos por fila en vez de una debajo de otra.
+  if (min <= 220) {
+    return (
+      <div className="grid gap-3 [--g:150px] sm:gap-4 sm:[--g:var(--g-min)]" style={{ "--g-min": `${min}px`, gridTemplateColumns: "repeat(auto-fit, minmax(min(var(--g), 100%), 1fr))" } as CSSProperties}>{children}</div>
+    );
+  }
   return <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(auto-fit, minmax(min(${min}px, 100%), 1fr))` }}>{children}</div>;
 }
 

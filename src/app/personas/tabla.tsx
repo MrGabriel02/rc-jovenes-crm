@@ -77,7 +77,7 @@ export function TablaPersonas({ filas, actividades, profesiones }: { filas: Fila
         <table className={`w-full text-sm ${verTodo ? "min-w-[1180px]" : "min-w-[760px]"}`}>
           <thead>
             <tr className="text-left text-muted">
-              <th className="px-2 py-2 font-semibold">Nombre</th>
+              <th className="sticky left-0 z-10 bg-surface px-2 py-2 font-semibold">Nombre</th>
               {verTodo ? <><th className="px-2 py-2 font-semibold">Cédula</th><th className="px-2 py-2 font-semibold">Teléfono</th><th className="px-2 py-2 font-semibold">Correo</th><th className="px-2 py-2 font-semibold">Zona</th><th className="px-2 py-2 font-semibold">Profesión</th></> : null}
               <th className="px-2 py-2 text-right font-semibold">Edad</th><th className="px-2 py-2 font-semibold">Estado</th>
               <th className="px-2 py-2 font-semibold">Equipo</th><th className="px-2 py-2 text-right font-semibold">Actividades</th><th className="px-2 py-2 text-right font-semibold">Veces que sirvió</th><th className="px-2 py-2 font-semibold">Última DE</th>
@@ -86,7 +86,7 @@ export function TablaPersonas({ filas, actividades, profesiones }: { filas: Fila
           <tbody>
             {vis.slice(0, limite).map((f) => (
               <tr key={f.id} className="border-t border-border">
-                <td className="px-2 py-2.5">
+                <td className="sticky left-0 z-10 max-w-44 bg-surface px-2 py-2.5 sm:max-w-none">
                   <Link href={`/personas/${f.id}`} className="font-semibold">{f.nombre}</Link>
                   {f.formador ? <span className="block text-xs text-muted">{f.formador}</span> : null}
                 </td>
